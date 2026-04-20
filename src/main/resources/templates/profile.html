@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="max-w-md mx-auto bg-white min-h-screen p-5">
+
+    <!-- Profile -->
+    <div class="text-center">
+
+            <img th:if="${session.user.profileImage != null}"
+                 th:src="@{${session.user.profileImage}}"
+                 class="w-24 h-24 rounded-full mx-auto border mb-3 cursor-pointer object-cover border"
+                 onclick="openPopup()">
+
+            <img th:if="${session.user.profileImage == null}"
+                 src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                 class="w-24 h-24 rounded-full mx-auto border mb-3 cursor-pointer object-cover border"
+                 onclick="openPopup()">
+
+            <h2 class="text-xl font-bold"
+                th:text="${session.user.username}">
+            </h2>
+
+        <p class="text-gray-500"
+           th:text="${session.user.role}">
+        </p>
+
+    </div>
+
+    <!-- Wallet -->
+    <div class="bg-green-500 text-white p-4 rounded-2xl mt-5 text-center">
+        <p class="text-sm">Wallet Points</p>
+        <h3 class="text-2xl font-bold" th:text="${session.user.points}"></h3>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-3 mt-5 text-center">
+
+        <div class="bg-gray-100 p-3 rounded-xl">
+            <p class="text-xs text-gray-500">Total</p>
+            <h3 class="font-bold" th:text="${totalCoupons}"></h3>
+        </div>
+
+        <div class="bg-gray-100 p-3 rounded-xl">
+            <p class="text-xs text-gray-500">Active</p>
+            <h3 class="font-bold" th:text="${activeCoupons}"></h3>
+        </div>
+
+        <div class="bg-gray-100 p-3 rounded-xl">
+            <p class="text-xs text-gray-500">Used</p>
+            <h3 class="font-bold" th:text="${usedCoupons}"></h3>
+        </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="mt-6 space-y-3">
+
+        <a href="/add"
+           class="block bg-blue-500 text-white p-3 rounded-xl text-center">
+            Add Coupon (+10 pts)
+        </a>
+
+        <a href="/my-coupons"
+           class="block bg-green-500 text-white p-3 rounded-xl text-center">
+            My Coupons
+        </a>
+
+        <a href="/"
+           class="block bg-gray-200 p-3 rounded-xl text-center">
+            Browse Coupons
+        </a>
+
+        <!-- ADMIN PANEL BUTTON -->
+        <a th:if="${session.user.role == 'ADMIN'}"
+           href="/admin"
+           class="block bg-purple-500 text-white p-3 rounded-xl text-center">
+            Admin Panel
+        </a>
+
+        <a href="/logout"
+           class="block bg-red-500 text-white p-3 rounded-xl text-center">
+            Logout
+        </a>
+
+    </div>
+
+</div>
+
+<div id="popup" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+
+    <div class="bg-white p-5 rounded-xl w-80">
+
+        <h3 class="text-lg font-bold mb-3">Update Profile Picture</h3>
+
+        <form action="/upload-profile" method="post" enctype="multipart/form-data">
+
+            <input type="file" name="file"
+                   class="w-full mb-3" required>
+
+            <button class="w-full bg-blue-500 text-white p-2 rounded">
+                Upload
+            </button>
+
+        </form>
+
+        <button onclick="closePopup()"
+                class="w-full mt-2 bg-gray-300 p-2 rounded">
+            Cancel
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+    function openPopup() {
+        document.getElementById("popup").classList.remove("hidden");
+    }
+
+    function closePopup() {
+        document.getElementById("popup").classList.add("hidden");
+    }
+</script>
+
+</body>
+</html>

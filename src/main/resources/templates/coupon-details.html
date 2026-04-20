@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Coupon Details</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        img:active {
+          transform: scale(0.95);
+          transition: 0.2s;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+<div class="max-w-md mx-auto bg-white min-h-screen">
+
+    <!-- Header -->
+    <div class="bg-blue-600 text-white p-5 rounded-b-3xl">
+        <a href="/" class="text-sm">← Back</a>
+
+        <h2 class="text-2xl font-bold mt-3" th:text="${coupon.brand}"></h2>
+        <p class="text-sm opacity-80">Special Offer</p>
+        <!-- Reported Badge -->
+        <div th:if="${coupon.reported}"
+             class="text-right">
+            <span class="bg-red-400 text-white px-3 py-1 rounded">
+                Reported
+            </span>
+        </div>
+    </div>
+
+    <!-- Card -->
+    <div class="p-4">
+
+        <!-- QR -->
+        <div class="bg-gray-50 p-4 rounded-2xl shadow text-center">
+            <img th:src="${coupon.qrCodeUrl}"
+                 class="h-40 mx-auto object-contain"/>
+        </div>
+
+        <!-- Details -->
+        <div class="mt-4">
+
+            <h3 class="text-xl font-bold">
+                <span th:text="${coupon.description}"></span>
+            </h3>
+
+            <div class="mt-4">
+
+                <p class="text-sm text-gray-500 mb-1">Coupon Code</p>
+
+                <div class="flex items-center justify-between bg-gray-100 p-3 rounded-xl">
+
+                <span id="codeText"
+                      class="font-semibold"
+                      th:text="${coupon.couponCode}">
+                </span>
+
+                            <button onclick="copyCode()"
+                                    class="text-blue-600 font-medium">
+                                Copy
+                            </button>
+
+                        </div>
+
+                <span id="copyMsg" class="text-green-500 text-sm hidden mt-1 block">
+                    Copied!
+                </span>
+
+            </div>
+
+
+            <p class="text-sm text-red-500 mt-2">
+                Expires on:
+                <span th:text="${coupon.expiryDate}"></span>
+            </p>
+            <p class="text-gray-500 mt-2">
+                Use this coupon at checkout.
+            </p>
+
+            <!-- Info -->
+            <div class="mt-4 space-y-2 text-sm text-gray-600">
+
+                <p>• Valid for limited time</p>
+                <p>• One-time use only</p>
+                <p>• Applicable on selected products</p>
+
+            </div>
+            <!-- Voting -->
+            <div class="flex justify-between mt-5 text-lg">
+
+                <a th:href="@{/upvote/{id}(id=${coupon.id})}"
+                   class="text-green-600">
+                    👍 <span th:text="${coupon.upvotes}"></span>
+                </a>
+
+                <a th:href="@{/downvote/{id}(id=${coupon.id})}"
+                   class="text-red-600">
+                    👎 <span th:text="${coupon.downvotes}"></span>
+                </a>
+
+            </div>
+
+            <!-- Buy Button -->
+            <a th:href="@{/buy/{id}(id=${coupon.id})}"
+               class="block w-full bg-green-500 text-white text-center p-3 rounded-xl mt-5">
+                Use Coupon
+            </a>
+
+            <!-- Report -->
+            <a th:href="@{/report/{id}(id=${coupon.id})}"
+               class="block mt-4 text-center hover:bg-gray-300 text-sm rounded-xl p-3">
+                Report this coupon
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script id="bb5v3d">
+    function copyCode() {
+        const code = document.getElementById("codeText").innerText;
+        navigator.clipboard.writeText(code);
+
+        const msg = document.getElementById("copyMsg");
+        msg.classList.remove("hidden");
+
+        setTimeout(() => msg.classList.add("hidden"), 1500);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Coupon</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+
+<div class="w-[375px] bg-white p-5 rounded-2xl shadow-md space-y-4 mt-4">
+
+    <h2 class="text-xl font-bold mb-4">Add Coupon</h2>
+
+    <form action="/save" method="post" th:object="${coupon}">
+
+        <input type="text" th:field="*{brand}"
+               placeholder="Brand"
+               class="w-full p-3 rounded-xl border mb-3" required>
+
+        <input type="text" th:field="*{description}"
+               placeholder="Description"
+               class="w-full p-3 rounded-xl border mb-3" required>
+
+        <input type="text" th:field="*{couponCode}"
+               placeholder="Coupon Code (e.g. SAVE50)"
+               class="w-full p-3 rounded-xl border mb-3" required>
+
+        <select th:field="*{category}" class="w-full p-3 rounded-xl border mb-3" required>
+            <option value="">Select Category</option>
+            <option value="Amazon">Amazon</option>
+            <option value="Flipkart">Flipkart</option>
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+            <option value="Electronics">Electronics</option>
+            <option value="cosmetics">cosmetics</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <input type="date" th:field="*{expiryDate}"
+               class="w-full p-3 rounded-xl border mb-3" required>
+
+        <input type="text" th:field="*{qrCodeUrl}"
+               placeholder="QR Image URL"
+               class="w-full p-3 rounded-xl border mb-3" required>
+
+        <button class="w-full bg-blue-500 text-white p-3 rounded-xl">
+            Save Coupon
+        </button>
+
+    </form>
+
+</div>
+<script>
+    function parseCoupon() {
+
+        const text = document.getElementById("couponText").value;
+
+        fetch("/parse-coupon", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: text })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            document.querySelector("[name='brand']").value = data.brand || "";
+            document.querySelector("[name='description']").value = data.description || "";
+            document.querySelector("[name='couponCode']").value = data.code || "";
+            document.querySelector("[name='category']").value = data.category || "";
+
+            alert("Auto-filled!");
+        });
+    }
+</script>
+
+<script>
+    function fetchLogo() {
+
+        const url = document.getElementById("couponUrl").value;
+
+        fetch("/extract-logo", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ url: url })
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            document.querySelector("[name='brand']").value = data.brand || "";
+            document.querySelector("[name='qrCodeUrl']").value = data.logo || "";
+
+        });
+    }
+</script>
+</body>
+</html>
