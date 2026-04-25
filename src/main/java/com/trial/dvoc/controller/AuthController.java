@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -86,22 +87,29 @@ public class AuthController {
     @PostMapping("/upload-profile")
     public String uploadProfile(@RequestParam("file") MultipartFile file,
                                 HttpSession session) throws Exception {
-
         User user = (User) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
-
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-
-        String uploadDir = "src/main/resources/static/uploads/";
-        Path path = Paths.get(uploadDir + fileName);
-
-        Files.createDirectories(path.getParent());
-        Files.write(path, file.getBytes());
-
+        if (user == null) {
+            return "redirect:/login";
+        }
+        if (file.isEmpty()) {
+            return "redirect:/profile";
+        }
+        String uploadDir = System.getProperty("user.dir") + "/uploads/";
+        File dir = new File(uploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        String fileName =
+                System.currentTimeMillis() + "_" +
+                        file.getOriginalFilename();
+        File destination =
+                new File(uploadDir + fileName);
+        file.transferTo(destination);
+        // Save relative URL in DB
         user.setProfileImage("/uploads/" + fileName);
-        service.register(user); // update user
-        session.setAttribute("user", user);
+        service.register(user); // updates user
 
+        session.setAttribute("user", user);
         return "redirect:/profile";
     }
 
