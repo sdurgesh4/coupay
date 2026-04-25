@@ -32,5 +32,14 @@ public class UserService {
     public List<User> getAllUsers() {
         return repo.findAll();
     }
+    
+    public void addPoints(Long userId,int pts){
+        User user = repo.findById(userId).orElse(null);
+    
+        if(user!=null){
+            user.setPoints(user.getPoints()+pts);
+            repo.save(user);
+        }
+    }
 
 }
