@@ -58,8 +58,8 @@ public class CouponController {
         userService.addPoints( user.getId(), 10);
         
         /* refresh session copy */
-        User updated = userService.findById( user.getId() );        
-        session.setAttribute( "user", updated );        
+        User fresh= userRepo.findById( user.getId() ).orElseThrow();
+        session.setAttribute( "user", fresh ); 
         return "redirect:/profile";
     }
 
