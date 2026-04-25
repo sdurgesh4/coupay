@@ -7,16 +7,23 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 flex justify-center items-center h-screen">
+<body class="bg-gray-100 flex justify-center items-center min-h-screen pt-6">
 
 <div class="w-[375px] bg-white p-5 rounded-2xl shadow-md space-y-4 mt-4">
 
-    <h2 class="text-xl font-bold mb-4">Add Coupon</h2>
-    <button
-            onclick="openHelp()"
-            class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-right">
-        &#9432;
-    </button>
+    <div class="mb-5">
+        <h2 class="text-2xl font-bold flex items-center gap-2">
+            Add Coupon
+            <span   onclick="openHelp()"
+                    class="cursor-pointer w-5 h-5 rounded-full bg-blue-100 text-blue-500 text-sm flex items-center justify-center">
+                &#9432;
+            </span>
+        </h2>
+        <p class="text-sm text-gray-500 mt-2">
+            Share unused coupons with others
+        </p>
+
+    </div>
 
     <form action="/save" method="post" th:object="${coupon}">
 
