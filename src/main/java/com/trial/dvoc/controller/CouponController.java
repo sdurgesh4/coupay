@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,12 +17,13 @@ import java.util.List;
 public class CouponController {
 
     private final CouponService service;
-
+    private final UserRepository userRepo;
     private final UserService userService;
 
-    public CouponController(CouponService service, UserService userService){
-     this.service=service;
-     this.userService=userService;
+    public CouponController( CouponService service, UserService userService, UserRepository userRepo ){
+        this.service=service;
+        this.userService=userService;
+        this.userRepo=userRepo;
     }
 
     // Home
