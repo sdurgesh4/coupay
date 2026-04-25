@@ -38,7 +38,7 @@ public class UserService {
     
         if(user!=null){
             user.setPoints(user.getPoints()+pts);
-            repo.save(user);
+            repo.saveAndFlush(user);
         }
     }
 
