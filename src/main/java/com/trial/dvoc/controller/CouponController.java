@@ -1,5 +1,7 @@
 package com.trial.dvoc.controller;
 
+import com.trial.dvoc.service.UserService;
+import com.trial.dvoc.repository.UserRepository;
 import com.trial.dvoc.model.Coupon;
 import com.trial.dvoc.model.User;
 import com.trial.dvoc.service.CouponService;
