@@ -56,7 +56,7 @@ public class AuthController {
             session.setAttribute("user", user);
 
             if (user.getRole().equals("ADMIN")) {
-                return "redirect:/add";
+                return "redirect:/";
             } else {
                 return "redirect:/";
             }
