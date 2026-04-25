@@ -27,8 +27,14 @@
                placeholder="Coupon Code (e.g. SAVE50)"
                class="w-full p-3 rounded-xl border mb-3" required>
 
+        <input
+                type="url"
+                th:field="*{redeemNowUrl}"
+                placeholder="Redeem URL (paste GPay coupon link)"
+                class="w-full p-3 rounded-xl border mb-3">
+
         <select th:field="*{category}" class="w-full p-3 rounded-xl border mb-3" required>
-            <option value="">Select Category</option>
+            <option value="" selected>Select Category</option>
             <option value="Amazon">Amazon</option>
             <option value="Flipkart">Flipkart</option>
             <option value="Food">Food</option>
@@ -39,7 +45,7 @@
         </select>
 
         <input type="date" th:field="*{expiryDate}"
-               class="w-full p-3 rounded-xl border mb-3" required>
+               class="w-full p-3 rounded-xl border mb-3" placeholder="Expiry Date" required>
 
         <input type="text" th:field="*{qrCodeUrl}"
                placeholder="QR Image URL"

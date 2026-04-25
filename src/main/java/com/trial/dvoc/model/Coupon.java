@@ -25,6 +25,7 @@ public class Coupon {
 
     @Column(unique = true)
     private String couponCode;
+    private String redeemNowUrl;
 
     private LocalDate expiryDate;
 

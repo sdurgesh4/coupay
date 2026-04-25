@@ -102,10 +102,17 @@
                 </a>
 
             </div>
+            <!-- If redeem url exists -->
+            <a th:if="${coupon.redeemNowUrl != null and !#strings.isEmpty(coupon.redeemNowUrl)}"
+               th:href="@{/buy/{id}(id=${coupon.id})}"
+               class="block mt-5 bg-blue-500 text-white text-center p-3 rounded-xl">
+                Redeem Now
+            </a>
 
-            <!-- Buy Button -->
-            <a th:href="@{/buy/{id}(id=${coupon.id})}"
-               class="block w-full bg-green-500 text-white text-center p-3 rounded-xl mt-5">
+            <!-- Fallback normal use coupon -->
+            <a th:if="${coupon.redeemNowUrl == null or #strings.isEmpty(coupon.redeemNowUrl)}"
+               th:href="@{/buy/{id}(id=${coupon.id})}"
+               class="block mt-5 bg-green-500 text-white text-center p-3 rounded-xl">
                 Use Coupon
             </a>
 

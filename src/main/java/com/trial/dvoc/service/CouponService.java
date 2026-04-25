@@ -75,14 +75,15 @@ public class CouponService {
                 .toList();
     }
 
-    public void buyCoupon(Long couponId, User user) {
-        Coupon c = repo.findById(couponId).orElse(null);
+    public Coupon buyCoupon(Long couponId, User user) {
 
-        if (c != null && !c.isUsed()) {
+        Coupon c=repo.findById(couponId).orElse(null);
+        if(c!=null && !c.isUsed()){
             c.setUsed(true);
             c.setUser(user);
             repo.save(c);
         }
+        return c;
     }
 
     public List<Coupon> getUserCoupons(User user) {

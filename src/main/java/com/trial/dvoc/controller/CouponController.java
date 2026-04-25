@@ -69,12 +69,18 @@ public class CouponController {
 
     // Buy
     @GetMapping("/buy/{id}")
-    public String buyCoupon(@PathVariable Long id, HttpSession session) {
+    public String buyCoupon(@PathVariable Long id,
+                            HttpSession session) {
 
-        User user = (User) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
+        User user=(User)session.getAttribute("user");
+        if(user==null) return "redirect:/login";
 
-        service.buyCoupon(id, user);
+        Coupon c = service.buyCoupon(id,user);
+
+        if(c.getRedeemNowUrl()!=null &&
+                !c.getRedeemNowUrl().isBlank()){
+            return "redirect:" + c.getRedeemNowUrl();
+        }
 
         return "redirect:/my-coupons";
     }
