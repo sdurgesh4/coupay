@@ -2,7 +2,9 @@ package com.trial.dvoc.controller;
 
 import com.trial.dvoc.model.Coupon;
 import com.trial.dvoc.model.User;
+import com.trial.dvoc.repository.UserRepository;
 import com.trial.dvoc.service.CouponService;
+import com.trial.dvoc.service.ImageService;
 import com.trial.dvoc.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -19,14 +21,16 @@ import java.nio.file.Paths;
 public class AuthController {
 
     private final UserService service;
-
+    private final ImageService imageService;
+    private final UserRepository userRepo;
     private final CouponService couponService;
 
-    public AuthController(UserService service, CouponService couponService) {
-        this.service = service;
+    public AuthController(UserRepository userRepo, UserService service, ImageService imageService, CouponService couponService){
+        this.userRepo=userRepo;
+        this.service=service;
+        this.imageService=imageService;
         this.couponService = couponService;
     }
-
     @GetMapping("/register")
     public String showRegister(Model model) {
         model.addAttribute("user", new User());
@@ -85,30 +89,19 @@ public class AuthController {
     }
 
     @PostMapping("/upload-profile")
-    public String uploadProfile(@RequestParam("file") MultipartFile file,
-                                HttpSession session) throws Exception {
-        User user = (User) session.getAttribute("user");
-        if (user == null) {
-            return "redirect:/login";
-        }
-        if (file.isEmpty()) {
-            return "redirect:/profile";
-        }
-        String uploadDir = System.getProperty("user.dir") + "/uploads/";
-        File dir = new File(uploadDir);
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-        String fileName =
-                System.currentTimeMillis() + "_" +
-                        file.getOriginalFilename();
-        File destination =
-                new File(uploadDir + fileName);
-        file.transferTo(destination);
-        // Save relative URL in DB
-        user.setProfileImage("/uploads/" + fileName);
-        service.register(user); // updates user
+    public String uploadProfile( @RequestParam("file") MultipartFile file,
+                       HttpSession session) throws Exception {
 
+        User user = (User) session.getAttribute("user");
+        if (user == null)
+            return "redirect:/login";
+
+        if (file.isEmpty())
+            return "redirect:/profile";
+
+        String imageUrl= imageService.upload(file);
+        user.setProfileImage( imageUrl );
+        userRepo.save(user);
         session.setAttribute("user", user);
         return "redirect:/profile";
     }
