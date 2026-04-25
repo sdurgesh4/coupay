@@ -15,6 +15,8 @@ public class User {
     private String password;
 
     private String profileImage; // URL or path
-    private int points = 0;
+    
+    @Column(nullable=false)
+    private Integer points = 0;
     private String role; // ADMIN or USER
 }
