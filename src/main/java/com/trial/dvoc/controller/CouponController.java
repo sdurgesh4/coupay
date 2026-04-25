@@ -15,8 +15,11 @@ public class CouponController {
 
     private final CouponService service;
 
-    public CouponController(CouponService service) {
-        this.service = service;
+    private final UserService userService;
+
+    public CouponController(CouponService service, UserService userService){
+     this.service=service;
+     this.userService=userService;
     }
 
     // Home
@@ -45,15 +48,18 @@ public class CouponController {
 
     // Save
     @PostMapping("/save")
-    public String saveCoupon(@ModelAttribute Coupon coupon, HttpSession session) {
-
-        User user = (User) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
-        service.saveCoupon(coupon);
-        // reward points
-        user.setPoints(user.getPoints() + 10);
-        session.setAttribute("user", user);
-
+    public String saveCoupon(@ModelAttribute Coupon coupon, HttpSession session){    
+        User user= (User)session.getAttribute("user");        
+        if(user==null){
+         return "redirect:/login";
+        }
+        
+        service.saveCoupon(coupon);        
+        userService.addPoints( user.getId(), 10);
+        
+        /* refresh session copy */
+        User updated = userService.findById( user.getId() );        
+        session.setAttribute( "user", updated );        
         return "redirect:/profile";
     }
 
