@@ -4,6 +4,7 @@ import com.trial.dvoc.model.Coupon;
 import com.trial.dvoc.model.User;
 import com.trial.dvoc.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
