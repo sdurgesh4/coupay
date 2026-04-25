@@ -12,6 +12,11 @@
 <div class="w-[375px] bg-white p-5 rounded-2xl shadow-md space-y-4 mt-4">
 
     <h2 class="text-xl font-bold mb-4">Add Coupon</h2>
+    <button
+            onclick="openHelp()"
+            class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold text-right">
+        &#9432;
+    </button>
 
     <form action="/save" method="post" th:object="${coupon}">
 
@@ -100,6 +105,68 @@
 
         });
     }
+</script>
+
+<div id="helpModal"
+     class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+
+    <div class="bg-white rounded-2xl p-6 w-11/12 max-w-md shadow-xl">
+
+        <h3 class="text-xl font-bold mb-4">
+            How to Add Coupon
+        </h3>
+
+        <ul class="text-gray-700 space-y-3 text-sm">
+
+            <li>
+                1. Copy coupon details from GPay or voucher app.
+            </li>
+
+            <li>
+                2. Enter brand name and discount description.
+            </li>
+
+            <li>
+                3. Paste coupon code.
+            </li>
+
+            <li>
+                4. Add expiry date.
+            </li>
+
+            <li>
+                5. Paste redeem link in Redeem URL if available.
+            </li>
+
+            <li>
+                6. Upload so others can use it before expiry.
+            </li>
+
+        </ul>
+
+        <button
+                onclick="closeHelp()"
+                class="mt-5 w-full bg-blue-500 text-white p-3 rounded-xl">
+            Got it
+        </button>
+
+    </div>
+
+</div>
+<script>
+
+    function openHelp(){
+    document
+    .getElementById("helpModal")
+    .classList.remove("hidden");
+    }
+
+    function closeHelp(){
+    document
+    .getElementById("helpModal")
+    .classList.add("hidden");
+    }
+
 </script>
 </body>
 </html>
