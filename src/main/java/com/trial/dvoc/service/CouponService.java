@@ -52,8 +52,48 @@ public class CouponService {
                 .toList();
     }
 
-    public void saveCoupon(Coupon coupon) {
+    public void saveCoupon(Coupon coupon){
+        coupon.setQrCodeUrl( getCategoryImage( coupon.getCategory() ));
         repo.save(coupon);
+    }
+
+    private String getCategoryImage(
+            String category){
+
+        if(category==null){
+            return defaultImage();
+        }
+
+        switch( category.toLowerCase() ){
+
+            case "amazon":
+                return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228403/amazon_jjcngb.jpg";
+
+            case "flipkart":
+                return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228404/flipkart_fhdz0v.jpg";
+
+            case "food":
+                return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228405/food_vhgltm.jpg";
+
+            case "travel":
+                return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228406/travel_kx4819.jpg";
+
+            case "fashion":
+                return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228405/fashion_hjrxfz.jpg";
+
+            case "electronics":
+                return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228404/electronics_banby3.jpg";
+
+            case "cosmetics":
+                return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228403/cosmetics_ffv8ep.jpg";
+
+            default:
+                return defaultImage();
+        }
+    }
+
+    private String defaultImage(){
+        return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228405/others_kabsji.jpg";
     }
 
     public void deleteCoupon(Long id) {
