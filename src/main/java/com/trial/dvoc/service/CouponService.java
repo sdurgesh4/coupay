@@ -57,13 +57,11 @@ public class CouponService {
         repo.save(coupon);
     }
 
-    private String getCategoryImage(
-            String category){
+    private String getCategoryImage( String category){
 
         if(category==null){
             return defaultImage();
         }
-
         switch( category.toLowerCase() ){
 
             case "amazon":
