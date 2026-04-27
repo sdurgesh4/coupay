@@ -12,7 +12,9 @@
     </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100
+dark:bg-slate-950
+dark:text-white">
 
 <div class="max-w-md mx-auto bg-white min-h-screen">
 
@@ -32,7 +34,8 @@
     </div>
 
     <!-- Card -->
-    <div class="p-4">
+    <div class="p-4 dark:bg-slate-800
+                dark:border-slate-700">
 
         <!-- QR -->
         <div class="bg-gray-50 p-4 rounded-2xl shadow text-center">
@@ -134,14 +137,14 @@
             <!-- If redeem url exists -->
             <a th:if="${coupon.redeemNowUrl != null and !#strings.isEmpty(coupon.redeemNowUrl)}"
                th:href="@{/buy/{id}(id=${coupon.id})}"
-               class="block mt-5 bg-blue-500 text-white text-center p-3 rounded-xl">
+               class="block mt-5 bg-blue-500 text-white text-center p-3 rounded-xl dark:bg-indigo-600">
                 Redeem Now
             </a>
 
             <!-- Fallback normal use coupon -->
             <a th:if="${coupon.redeemNowUrl == null or #strings.isEmpty(coupon.redeemNowUrl)}"
                th:href="@{/buy/{id}(id=${coupon.id})}"
-               class="block mt-5 bg-green-500 text-white text-center p-3 rounded-xl">
+               class="block mt-5 bg-green-500 text-white text-center p-3 rounded-xl dark:bg-indigo-600">
                 Use Coupon
             </a>
 
@@ -255,5 +258,51 @@
 
 </script>
 
+
+<button
+        id="themeToggle"
+        onclick="toggleTheme()"
+        class="fixed bottom-6 right-6 z-50
+w-14 h-14 rounded-full
+bg-slate-900 text-white
+dark:bg-white dark:text-black
+shadow-xl">
+
+    🌙
+
+</button>
+
+
+<script>
+
+    function toggleTheme(){
+
+    document.documentElement
+    .classList.toggle("dark");
+
+    if(
+    document.documentElement.classList.contains("dark")
+    ){
+    localStorage.theme="dark";
+    document.getElementById(
+    'themeToggle'
+    ).innerHTML='☀';
+    }
+    else{
+    localStorage.theme="light";
+    document.getElementById(
+    'themeToggle'
+    ).innerHTML='🌙';
+    }
+
+    }
+
+    if(localStorage.theme==="dark"){
+    document.getElementById(
+    'themeToggle'
+    ).innerHTML='☀';
+    }
+
+</script>
 </body>
 </html>

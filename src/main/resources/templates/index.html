@@ -19,12 +19,30 @@
             overflow:hidden;
         }
     </style>
+    <script>
+        tailwind.config={
+        darkMode:'class'
+        }
+    </script>
+
+    <script>
+        if(localStorage.theme==="dark"){
+        document.documentElement.classList.add("dark");
+        }
+    </script>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 text-gray-900
+dark:bg-gradient-to-br
+dark:from-slate-950
+dark:via-indigo-950
+dark:to-slate-900
+dark:text-white">
 <div class="max-w-7xl mx-auto">
+
     <!-- Header -->
-    <div class="bg-[#f5efe0] p-6 rounded-b-3xl">
+    <div class="bg-[#f5efe0] dark:bg-slate-900 dark:border-b dark:border-slate-700
+p-6 rounded-b-3xl">
 
         <div class="flex justify-between items-start">
 
@@ -61,9 +79,11 @@
 
         <form action="/search" method="get">
 
-            <div class="bg-gray-100 rounded-full
-                    flex items-center
-                    px-5 h-14 shadow-lg">
+            <div class="bg-gray-100
+                    dark:bg-slate-800
+                    dark:border dark:border-slate-600
+                    rounded-full flex items-center
+                    px-5 h-12 shadow-lg ">
 
                 <svg
                         class="w-7 h-7 text-gray-400 mr-3"
@@ -83,12 +103,9 @@
                         name="keyword"
                         placeholder="Search brands and coupons"
                         style="border:none;box-shadow:none;"
-                        class="bg-transparent
-                            w-full
-                            outline-none
-                            text-sm
-                            leading-none
-                            placeholder-gray-500"/>
+                        class="w-full bg-transparent border-0 outline-none
+                                dark:text-white
+                                dark:placeholder-slate-400"/>
             </div>
 
         </form>
@@ -129,8 +146,8 @@
         <a href="/category/Other" class="px-4 py-2 bg-purple-100 rounded-full text-sm">
             Others
         </a>
-
     </div>
+
     <!-- Grid -->
     <div class="grid gap-4 p-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3
     lg:grid-cols-4 xl:grid-cols-5">
@@ -145,7 +162,11 @@
                class="block bg-white rounded-[28px]
                 overflow-hidden border border-gray-200
                 shadow-sm hover:shadow-lg
-                active:scale-95 transition">
+                active:scale-95 transition
+
+                dark:bg-slate-800
+                border border-gray-200
+                dark:border-slate-700">
 
 
                 <!-- IMAGE TOP HALF -->
@@ -187,23 +208,65 @@
                 </div>
                 <!-- LOWER HALF -->
                 <div class="p-4">
-                    <h3 class="text-2xl leading-tight font-medium truncate"
+                    <h3 class="text-2xl leading-tight font-medium truncate dark:text-white"
                         th:text="${c.brand}">
                     </h3>
 
-                    <p class="mt-2 text-lg text-gray-700 line-clamp-2 leading-snug"
+                    <p class="mt-2 text-lg text-gray-700 line-clamp-2 leading-snug dark:text-slate-300"
                        th:text="${c.description}">
                     </p>
-
                 </div>
-
             </a>
-
         </div>
-
     </div>
 
 </div>
 
+
+<button
+        id="themeToggle"
+        onclick="toggleTheme()"
+        class="fixed bottom-6 right-6 z-50
+w-14 h-14 rounded-full
+bg-slate-900 text-white
+dark:bg-white dark:text-black
+shadow-xl">
+
+    🌙
+
+</button>
+
+
+<script>
+
+    function toggleTheme(){
+
+    document.documentElement
+    .classList.toggle("dark");
+
+    if(
+    document.documentElement.classList.contains("dark")
+    ){
+    localStorage.theme="dark";
+    document.getElementById(
+    'themeToggle'
+    ).innerHTML='☀';
+    }
+    else{
+    localStorage.theme="light";
+    document.getElementById(
+    'themeToggle'
+    ).innerHTML='🌙';
+    }
+
+    }
+
+    if(localStorage.theme==="dark"){
+    document.getElementById(
+    'themeToggle'
+    ).innerHTML='☀';
+    }
+
+</script>
 </body>
 </html>

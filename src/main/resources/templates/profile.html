@@ -7,9 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100
+dark:bg-slate-950
+dark:text-white">
 
-<div class="max-w-md mx-auto bg-white min-h-screen p-5">
+<div class="max-w-md mx-auto bg-white min-h-screen p-5 dark:bg-slate-800">
 
     <!-- Profile -->
     <div class="text-center">
@@ -128,6 +130,52 @@
     function closePopup() {
         document.getElementById("popup").classList.add("hidden");
     }
+</script>
+
+<button
+        id="themeToggle"
+        onclick="toggleTheme()"
+        class="fixed bottom-6 right-6 z-50
+w-14 h-14 rounded-full
+bg-slate-900 text-white
+dark:bg-white dark:text-black
+shadow-xl">
+
+    🌙
+
+</button>
+
+
+<script>
+
+    function toggleTheme(){
+
+    document.documentElement
+    .classList.toggle("dark");
+
+    if(
+    document.documentElement.classList.contains("dark")
+    ){
+    localStorage.theme="dark";
+    document.getElementById(
+    'themeToggle'
+    ).innerHTML='☀';
+    }
+    else{
+    localStorage.theme="light";
+    document.getElementById(
+    'themeToggle'
+    ).innerHTML='🌙';
+    }
+
+    }
+
+    if(localStorage.theme==="dark"){
+    document.getElementById(
+    'themeToggle'
+    ).innerHTML='☀';
+    }
+
 </script>
 
 </body>
