@@ -6,9 +6,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <script>
+        tailwind.config={
+        darkMode:'class'
+        }
+    </script>
+
+    <script>
+        if(localStorage.theme==="dark"){
+        document.documentElement
+        .classList.add("dark");
+        }
+    </script>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-gray-100 bg-gray-100
+      dark:bg-slate-950
+      dark:text-white">
 
 <div class="max-w-6xl mx-auto">
 
