@@ -1,9 +1,9 @@
 package com.trial.dvoc.controller;
 
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
+import java.time.LocalDate;
 import java.util.*;
+import java.util.regex.*;
 
 @RestController
 public class AiImportController {
@@ -12,57 +12,122 @@ public class AiImportController {
     public Map<String,String> importCoupon(
             @RequestParam String raw){
 
-        String prompt=
-                """
-                Extract as JSON:
-                brand,
-                description,
-                couponCode,
-                category,
-                expiryDate
-                
-                Text:
-                """+raw;
-
-
-        Map req=
-                Map.of(
-                        "inputs",
-                        prompt
-                );
-
-        RestTemplate rt=
-                new RestTemplate();
-
-        String api=
-                "https://api-inference.huggingface.co/models/google/flan-t5-large";
-
-        Map res=
-                rt.postForObject(
-                        api,
-                        req,
-                        Map.class
-                );
-
-        /* fallback simple parse */
         Map<String,String> out=
                 new HashMap<>();
 
-        if(raw.contains("Cleartrip")){
-            out.put("brand","Cleartrip");
-            out.put("category","Travel");
-        }
 
-        if(raw.contains("MakeMyTrip")){
+        /* ---------- BRAND ---------- */
+
+        if(raw.toLowerCase().contains("makemytrip")){
             out.put("brand","MakeMyTrip");
             out.put("category","Travel");
         }
 
-        out.put(
-                "description",
-                raw.split("\n")[1]
+        else if(raw.toLowerCase().contains("cleartrip")){
+            out.put("brand","Cleartrip");
+            out.put("category","Travel");
+        }
+
+        else if(raw.toLowerCase().contains("amazon")){
+            out.put("brand","Amazon");
+            out.put("category","Shopping");
+        }
+
+
+
+        /* ---------- DESCRIPTION ---------- */
+
+        String[] lines=
+                raw.split("\\r?\\n");
+
+        for(String line:lines){
+
+            line=line.trim();
+
+            if(
+                    line.contains("off")
+                            && !line.toLowerCase()
+                            .contains("voucher")
+            ){
+                out.put(
+                        "description",
+                        line
+                );
+                break;
+            }
+
+        }
+
+        /* ---------- COUPON CODE ---------- */
+        Matcher brand=
+                Pattern.compile(
+                        "may like this (.*?) voucher",
+                        Pattern.CASE_INSENSITIVE
+                ).matcher(raw);
+
+        if(brand.find()){
+            out.put(
+                    "brand",
+                    brand.group(1).trim()
+            );
+        }
+
+        Matcher code=
+                Pattern.compile(
+                        "Voucher\\s*Code:\\s*(\\S+)",
+                        Pattern.CASE_INSENSITIVE
+                ).matcher(raw);
+
+        if(code.find()){
+
+            out.put(
+                    "couponCode",
+                    code.group(1)
+            );
+
+        }
+
+
+
+        /* ---------- EXPIRY ---------- */
+
+        Matcher exp=
+                Pattern.compile(
+                        "Expiring in\\s*(\\d+)\\s*days",
+                        Pattern.CASE_INSENSITIVE
+                ).matcher(raw);
+
+        if(exp.find()){
+
+            int days=
+                    Integer.parseInt(
+                            exp.group(1)
+                    );
+
+            out.put(
+                    "expiryDate",
+                    LocalDate.now()
+                            .plusDays(days)
+                            .toString()
+            );
+
+        }
+
+
+
+        /* fallback if missing */
+        out.putIfAbsent(
+                "brand",
+                "Other"
+        );
+
+        out.putIfAbsent(
+                "category",
+                "Shopping"
         );
 
         return out;
+
     }
+
 }

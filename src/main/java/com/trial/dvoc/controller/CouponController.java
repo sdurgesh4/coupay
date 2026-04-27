@@ -178,4 +178,11 @@ public class CouponController {
         service.reportCoupon(id);
         return "redirect:/";
     }
+
+    @GetMapping("/share-coupon")
+    public String shareCoupon( @RequestParam(required=false) String text, Model model){
+
+        model.addAttribute("sharedText", text );
+        return "add_coupon";
+    }
 }
