@@ -1,5 +1,7 @@
 package com.trial.dvoc.controller;
 
+import com.trial.dvoc.model.Vote;
+import com.trial.dvoc.repository.VoteRepository;
 import com.trial.dvoc.service.UserService;
 import com.trial.dvoc.repository.UserRepository;
 import com.trial.dvoc.model.Coupon;
@@ -18,11 +20,13 @@ public class CouponController {
     private final CouponService service;
     private final UserRepository userRepo;
     private final UserService userService;
+    private final VoteRepository voteRepo;
 
-    public CouponController( CouponService service, UserService userService, UserRepository userRepo ){
+    public CouponController(CouponService service, UserService userService, UserRepository userRepo, VoteRepository voteRepo){
         this.service=service;
         this.userService=userService;
         this.userRepo=userRepo;
+        this.voteRepo = voteRepo;
     }
 
     // Home
@@ -106,15 +110,27 @@ public class CouponController {
         return "my-coupons";
     }
 
-    // Details
     @GetMapping("/coupon/{id}")
-    public String couponDetails(@PathVariable Long id, Model model, HttpSession session) {
+    public String couponDetails( @PathVariable Long id, Model model,HttpSession session){
+        User user= (User)session.getAttribute("user");
 
-        if (session.getAttribute("user") == null) {
+        if(user==null){
             return "redirect:/login";
         }
-
-        model.addAttribute("coupon", service.getCouponById(id));
+        Coupon coupon=   service.getCouponById(id);
+        Vote vote=  voteRepo.findByUserAndCoupon(  user, coupon ).orElse(null);
+        if(vote!=null){
+            model.addAttribute(
+                    "userVote",
+                    vote.isUpvote()
+                            ? "LIKE"
+                            : "DISLIKE"
+            );
+        }
+        model.addAttribute(
+                "coupon",
+                coupon
+        );
         return "coupon-details";
     }
 
