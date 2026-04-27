@@ -130,27 +130,30 @@ public class CouponController {
         return "index";
     }
 
-    // Voting
+    //voting
     @GetMapping("/upvote/{id}")
-    public String upvote(@PathVariable Long id, HttpSession session) {
+    public String upvote( @PathVariable Long id, HttpSession session){
 
-        User user = (User) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
+        User user= (User)session.getAttribute("user");
 
-        service.vote(id, user, true);
+        if(user==null)
+            return "redirect:/login";
 
-        return "redirect:/";
+        service.vote(id, user,true );
+        return "redirect:/coupon/"+id;
     }
 
     @GetMapping("/downvote/{id}")
-    public String downvote(@PathVariable Long id, HttpSession session) {
+    public String downvote( @PathVariable Long id, HttpSession session){
 
-        User user = (User) session.getAttribute("user");
-        if (user == null) return "redirect:/login";
+        User user= (User)session.getAttribute("user");
 
-        service.vote(id, user, false);
+        if(user==null)
+            return "redirect:/login";
 
-        return "redirect:/";
+        service.vote( id, user,false);
+
+        return "redirect:/coupon/"+id;
     }
 
     // Report

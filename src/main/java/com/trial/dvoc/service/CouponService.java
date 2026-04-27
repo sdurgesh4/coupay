@@ -173,40 +173,108 @@ public class CouponService {
                 .toList();
     }
 
-    public void vote(Long couponId, User user, boolean isUpvote) {
+    public void vote(
+            Long couponId,
+            User user,
+            boolean isUpvote){
 
-        Coupon coupon = repo.findById(couponId).orElse(null);
-        if (coupon == null) return;
+        Coupon coupon=
+                repo.findById(couponId)
+                        .orElse(null);
 
-        Vote existing = voteRepo.findByUserAndCoupon(user, coupon).orElse(null);
+        if(coupon==null) return;
 
-        if (existing == null) {
-            // First vote
-            Vote vote = new Vote();
+        Vote existing=
+                voteRepo.findByUserAndCoupon(
+                        user,
+                        coupon
+                ).orElse(null);
+
+
+
+        /* FIRST VOTE */
+        if(existing==null){
+
+            Vote vote=new Vote();
+
             vote.setUser(user);
             vote.setCoupon(coupon);
             vote.setUpvote(isUpvote);
+
             voteRepo.save(vote);
 
-            if (isUpvote) coupon.setUpvotes(coupon.getUpvotes() + 1);
-            else coupon.setDownvotes(coupon.getDownvotes() + 1);
-
-        } else {
-            // User already voted → allow toggle
-            if (existing.isUpvote() != isUpvote) {
-
-                if (isUpvote) {
-                    coupon.setUpvotes(coupon.getUpvotes() + 1);
-                    coupon.setDownvotes(coupon.getDownvotes() - 1);
-                } else {
-                    coupon.setDownvotes(coupon.getDownvotes() + 1);
-                    coupon.setUpvotes(coupon.getUpvotes() - 1);
-                }
-
-                existing.setUpvote(isUpvote);
-                voteRepo.save(existing);
+            if(isUpvote){
+                coupon.setUpvotes(
+                        coupon.getUpvotes()+1
+                );
+            }else{
+                coupon.setDownvotes(
+                        coupon.getDownvotes()+1
+                );
             }
+
+            repo.save(coupon);
+            return;
         }
+
+
+
+        /* CLICK SAME AGAIN = REMOVE VOTE */
+        if(existing.isUpvote()==isUpvote){
+
+            if(isUpvote){
+                coupon.setUpvotes(
+                        Math.max(
+                                0,
+                                coupon.getUpvotes()-1
+                        ));
+            }else{
+                coupon.setDownvotes(
+                        Math.max(
+                                0,
+                                coupon.getDownvotes()-1
+                        ));
+            }
+
+            voteRepo.delete(existing);
+
+            repo.save(coupon);
+            return;
+        }
+
+
+
+        /* SWITCH VOTE */
+        if(isUpvote){
+
+            coupon.setUpvotes(
+                    coupon.getUpvotes()+1
+            );
+
+            coupon.setDownvotes(
+                    Math.max(
+                            0,
+                            coupon.getDownvotes()-1
+                    ));
+
+        }else{
+
+            coupon.setDownvotes(
+                    coupon.getDownvotes()+1
+            );
+
+            coupon.setUpvotes(
+                    Math.max(
+                            0,
+                            coupon.getUpvotes()-1
+                    ));
+        }
+
+        existing.setUpvote(
+                isUpvote
+        );
+
+        voteRepo.save(existing);
 
         repo.save(coupon);
     }

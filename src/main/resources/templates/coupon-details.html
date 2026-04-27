@@ -90,46 +90,32 @@
             </div>
             <!-- Voting -->
             <div class="mt-8 flex justify-center gap-12">
-                <button onclick="toggleLike()"
-                        class="flex flex-col items-center">
 
-                    <div id="likeCircle"
-                         class="w-14 h-14 rounded-full
-                        bg-white shadow border
-                        flex items-center justify-center transition">
+                <a th:href="@{/upvote/{id}(id=${coupon.id})}"
+                   class="flex flex-col items-center">
+                    <img src="https://res.cloudinary.com/dpxhldb4y/image/upload/v1777275997/like-outline_zlecui.png"
+                            class="w-10">
 
-                        <img id="likeImg"
-                             src="https://res.cloudinary.com/dpxhldb4y/image/upload/v1777275997/like-outline_zlecui.png"
-                             class="w-8 h-8">
-                    </div>
+                    <span class="font-semibold text-blue-600 mt-2"
+                          th:text="${coupon.upvotes}"> 0 </span>
 
-                    <span class="mt-2 text-sm text-gray-500">
-                        Like
-                    </span>
+                    <span class="text-sm text-gray-500"> Like </span>
+                </a>
 
-                </button>
+                <a th:href="@{/downvote/{id}(id=${coupon.id})}"
+                   class="flex flex-col items-center">
+                    <img src="https://res.cloudinary.com/dpxhldb4y/image/upload/w_64,h_64,c_fit/v1777275997/dislike-outline_lt3op5.png"
+                            class="w-10">
 
-                <button onclick="toggleDislike()"
-                        class="flex flex-col items-center">
+                    <span class="font-semibold text-red-500 mt-2"
+                          th:text="${coupon.downvotes}"> 0 </span>
 
-                    <div id="dislikeCircle"
-                         class="w-14 h-14 rounded-full
-                        bg-white shadow border
-                        flex items-center justify-center transition">
-
-                    <img id="dislikeImg"
-                             src="https://res.cloudinary.com/dpxhldb4y/image/upload/w_64,h_64,c_fit/v1777275997/dislike-outline_lt3op5.png"
-                             class="w-8 h-8">
-                    </div>
-
-                    <span class="mt-2 text-sm text-gray-500">
-                        Dislike
-                    </span>
-
-                </button>
-
+                    <span class="text-sm text-gray-500"> Dislike </span>
+                </a>
 
             </div>
+
+
             <!-- If redeem url exists -->
             <a th:if="${coupon.redeemNowUrl != null and !#strings.isEmpty(coupon.redeemNowUrl)}"
                th:href="@{/buy/{id}(id=${coupon.id})}"
