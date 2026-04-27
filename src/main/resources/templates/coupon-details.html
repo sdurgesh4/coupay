@@ -89,17 +89,44 @@
 
             </div>
             <!-- Voting -->
-            <div class="flex justify-between mt-5 text-lg">
+            <div class="mt-8 flex justify-center gap-12">
+                <button onclick="toggleLike()"
+                        class="flex flex-col items-center">
 
-                <a th:href="@{/upvote/{id}(id=${coupon.id})}"
-                   class="text-green-600">
-                    👍 <span th:text="${coupon.upvotes}"></span>
-                </a>
+                    <div id="likeCircle"
+                         class="w-14 h-14 rounded-full
+                        bg-white shadow border
+                        flex items-center justify-center transition">
 
-                <a th:href="@{/downvote/{id}(id=${coupon.id})}"
-                   class="text-red-600">
-                    👎 <span th:text="${coupon.downvotes}"></span>
-                </a>
+                        <img id="likeImg"
+                             src="https://res.cloudinary.com/dpxhldb4y/image/upload/w_64,h_64,c_fit/reaction-icons/like-outline.png"
+                             class="w-8 h-8">
+                    </div>
+
+                    <span class="mt-2 text-sm text-gray-500">
+                        Like
+                    </span>
+
+                </button>
+
+                <button onclick="toggleDislike()"
+                        class="flex flex-col items-center">
+
+                    <div id="dislikeCircle"
+                         class="w-14 h-14 rounded-full
+                        bg-white shadow border
+                        flex items-center justify-center transition">
+                    <img id="dislikeImg"
+                             src="https://res.cloudinary.com/dpxhldb4y/image/upload/w_64,h_64,c_fit/reaction-icons/dislike-outline.png"
+                             class="w-8 h-8">
+                    </div>
+
+                    <span class="mt-2 text-sm text-gray-500">
+                        Dislike
+                    </span>
+
+                </button>
+
 
             </div>
             <!-- If redeem url exists -->
@@ -137,6 +164,93 @@
 
         setTimeout(() => msg.classList.add("hidden"), 1500);
     }
+</script>
+
+<script>
+
+    const likeOutline=
+    "https://res.cloudinary.com/dpxhldb4y/image/upload/w_64,h_64,c_fit/reaction-icons/like-outline.png";
+
+    const likeFill=
+    "https://res.cloudinary.com/dpxhldb4y/image/upload/w_64,h_64,c_fit/reaction-icons/like-fill.png";
+
+    const dislikeOutline=
+    "https://res.cloudinary.com/dpxhldb4y/image/upload/w_64,h_64,c_fit/reaction-icons/dislike-outline.png";
+
+    const dislikeFill=
+    "https://res.cloudinary.com/dpxhldb4y/image/upload/w_64,h_64,c_fit/reaction-icons/dislike-fill.png";
+
+    let liked=false;
+    let disliked=false;
+
+    function toggleLike(){
+    liked=!liked;
+    if(liked){
+    disliked=false;
+    document.getElementById(
+    "likeImg"
+    ).src=likeFill;
+
+    document.getElementById(
+    "dislikeImg"
+    ).src=dislikeOutline;
+
+    pulse("likeCircle");
+    }else{
+        document.getElementById(
+        "likeImg"
+        ).src=likeOutline;
+        }
+    }
+
+
+
+    function toggleDislike(){
+
+    disliked=!disliked;
+
+    if(disliked){
+
+    liked=false;
+
+    document.getElementById(
+    "dislikeImg"
+    ).src=dislikeFill;
+
+    document.getElementById(
+    "likeImg"
+    ).src=likeOutline;
+
+    pulse("dislikeCircle");
+
+    }else{
+
+    document.getElementById(
+    "dislikeImg"
+    ).src=dislikeOutline;
+
+    }
+
+    }
+
+
+
+    function pulse(id){
+
+    let el=document.getElementById(id);
+
+    el.classList.add(
+    "scale-125"
+    );
+
+    setTimeout(()=>{
+    el.classList.remove(
+    "scale-125"
+    );
+    },250);
+
+    }
+
 </script>
 
 </body>
