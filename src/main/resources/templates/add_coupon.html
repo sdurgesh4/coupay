@@ -257,11 +257,7 @@ dark:border-slate-600" placeholder="Expiry Date" required>
     }
 
     async function importCoupon(){
-
-    let raw=
-    document.getElementById(
-    "couponRawText"
-    ).value;
+    let raw = document.getElementById("couponRawText").value;
 
     let res=
     await fetch("/ai-import",{
@@ -290,12 +286,18 @@ dark:border-slate-600" placeholder="Expiry Date" required>
     ).value=data.couponCode || "";
 
     document.querySelector(
+    '[name="redeemNowUrl"]'
+    ).value=
+    data.redeemNowUrl || "";
+
+    document.querySelector(
     '[name="category"]'
     ).value=data.category || "";
 
     document.querySelector(
     '[name="expiryDate"]'
     ).value=data.expiryDate || "";
+
 
     closeImportModal();
 

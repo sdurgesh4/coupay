@@ -114,6 +114,21 @@ public class AiImportController {
         }
 
 
+        /* ---------- REDEEM URL ---------- */
+
+        Matcher url=
+                Pattern.compile(
+                        "(https?://\\S+)"
+                ).matcher(raw);
+
+        if(url.find()){
+            out.put(
+                    "redeemNowUrl",
+                    url.group(1)
+            );
+
+        }
+
 
         /* fallback if missing */
         out.putIfAbsent(
