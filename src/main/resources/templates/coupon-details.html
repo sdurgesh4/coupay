@@ -64,22 +64,21 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
                 <span th:text="${coupon.description}"></span>
             </h3>
 
-            <div class="mt-4 dark:bg-slate-800 dark:border-b dark:border-slate-500 ">
-
-                <p class="text-sm text-gray-800 mb-1 dark:text-white-800">Coupon Code</p>
+            <div class="mt-4 dark:bg-slate-800">
+                 <p class="text-sm text-gray-800 mb-1 dark:text-white">Coupon Code</p>
 
                 <div class="flex items-center justify-between bg-gray-100 p-3 rounded-xl">
                 <span id="codeText"
-                      class="font-semibold text-gray-800 dark:text-white
-                                dark:placeholder-slate-400"
+                      class="font-semibold text-gray-800
+                      dark:text-DarkSlateBlue dark:placeholder-black-700"
                       th:text="${coupon.couponCode}">
                 </span>
                             <button onclick="copyCode()"
                                     class="text-blue-600 font-medium">
                                 Copy
                             </button>
-
                 </div>
+
                 <span id="copyMsg" class="text-green-500 text-sm hidden mt-1 block">
                     Copied!
                 </span>
