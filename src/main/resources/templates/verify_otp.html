@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/verify-otp" method="post">
+
+    <input
+            type="hidden"
+            name="email"
+            th:value="${email}">
+
+    <input
+            name="otp"
+            placeholder="Enter OTP">
+
+    <button>
+        Verify OTP
+    </button>
+
+</form>
+</body>
+</html>
