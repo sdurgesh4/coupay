@@ -18,14 +18,22 @@ public class UserService {
         this.repo = repo;
     }
 
-    public void register(User user) {
+    public void register(User user){
+        if(repo.existsByEmail(
+                        user.getEmail()
+                )){
+            throw new RuntimeException(
+                    "Email exists"
+            );
+        }
+
         repo.save(user);
     }
 
-    public User login(String username, String password) {
-        User user = repo.findByUsername(username);
+    public User login( String email,String password ){
+        User user= repo.findByEmail(email);
 
-        if (user != null && user.getPassword().equals(password)) {
+        if( user!=null && user.getPassword().equals(password) ){
             return user;
         }
         return null;

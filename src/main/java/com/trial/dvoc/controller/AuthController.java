@@ -50,23 +50,26 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String username,
-                        @RequestParam String password,
-                        HttpSession session) {
+    public String login(
+            @RequestParam String email,
+            @RequestParam String password,
+            HttpSession session){
 
-        User user = service.login(username, password);
+        User user=
+                service.login(
+                        email,
+                        password
+                );
 
-        if (user != null) {
-            session.setAttribute("user", user);
-
-            if (user.getRole().equals("ADMIN")) {
-                return "redirect:/";
-            } else {
-                return "redirect:/";
-            }
+        if(user!=null){
+            session.setAttribute(
+                    "user",
+                    user
+            );
+            return "redirect:/";
         }
 
-        return "redirect:/login?error";
+        return "login";
     }
 
     @GetMapping("/logout")
