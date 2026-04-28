@@ -4,6 +4,7 @@ import com.trial.dvoc.model.User;
 import com.trial.dvoc.repository.UserRepository;
 import com.trial.dvoc.service.EmailService;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +34,9 @@ public class ForgotPasswordController {
     @PostMapping("/send-otp")
     public String sendOtp(
             @RequestParam String email,
-            Model model){
+            HttpSession session,
+            Model model
+    ){
 
         User user=
                 userRepo.findByEmail(email);
@@ -48,35 +51,39 @@ public class ForgotPasswordController {
 
         String otp=
                 String.valueOf(
-                        100000+
-                                new Random()
-                                        .nextInt(900000)
+                        100000 +
+                                new Random().nextInt(900000)
                 );
 
-        user.setResetOtp(
+        session.setAttribute(
+                "otp",
                 otp
         );
 
-        user.setOtpExpiry(
-                LocalDateTime.now()
-                        .plusMinutes(10)
-        );
-
-        userRepo.save(user);
-
-        emailService.sendOtp(
-                email,
-                otp
-        );
-
-        model.addAttribute(
+        session.setAttribute(
                 "email",
                 email
         );
 
+        try{
+            emailService.sendOtp(
+                    email,
+                    otp
+            );
+        }catch(Exception e){
+
+            e.printStackTrace();
+
+            model.addAttribute(
+                    "error",
+                    "Mail service unavailable"
+            );
+
+            return "forgot_password";
+        }
+
         return "verify_otp";
     }
-
 
 
 

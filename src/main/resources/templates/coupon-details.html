@@ -51,7 +51,8 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
                 dark:border-slate-700">
 
         <!-- QR -->
-        <div class="bg-gray-50 p-4 rounded-2xl shadow text-center">
+        <div class="bg-gray-50 p-4 rounded-2xl shadow text-center
+        dark:bg-slate-800 dark:border-b dark:border-slate-500 ">
             <img th:src="${coupon.qrCodeUrl}"
                  class="h-40 mx-auto object-contain"/>
         </div>
@@ -63,13 +64,14 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
                 <span th:text="${coupon.description}"></span>
             </h3>
 
-            <div class="mt-4">
+            <div class="mt-4 dark:bg-slate-800 dark:border-b dark:border-slate-500 ">
 
-                <p class="text-sm text-gray-800 mb-1">Coupon Code</p>
+                <p class="text-sm text-gray-800 mb-1 dark:text-white-800">Coupon Code</p>
 
                 <div class="flex items-center justify-between bg-gray-100 p-3 rounded-xl">
                 <span id="codeText"
-                      class="font-semibold text-gray-800"
+                      class="font-semibold text-gray-800 dark:text-white
+                                dark:placeholder-slate-400"
                       th:text="${coupon.couponCode}">
                 </span>
                             <button onclick="copyCode()"
@@ -87,12 +89,12 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
                 Expires on:
                 <span th:text="${coupon.expiryDate}"></span>
             </p>
-            <p class="text-gray-500 mt-2">
+            <p class="text-gray-500 mt-2 dark:text-white-800">
                 Use this coupon at checkout.
             </p>
 
             <!-- Info -->
-            <div class="mt-4 space-y-2 text-sm text-gray-700">
+            <div class="mt-4 space-y-2 text-sm text-gray-700 dark:text-white-800">
 
                 <p>• Valid for limited time</p>
                 <p>• One-time use only</p>
@@ -100,10 +102,10 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
 
             </div>
             <!-- Voting -->
-            <div class="mt-8 flex justify-center gap-10">
+            <div class="mt-8 flex justify-center gap-10 dark:text-white-900">
 
                 <a th:href="@{/upvote/{id}(id=${coupon.id})}"
-                   class="flex items-center gap-2">
+                   class="flex items-center gap-2 dark:text-white">
 
                     <img
                             th:src="${userVote == 'LIKE'} ?
