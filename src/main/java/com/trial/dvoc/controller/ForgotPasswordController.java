@@ -83,30 +83,20 @@ public class ForgotPasswordController {
 
 
     @PostMapping("/verify-otp")
-    public String verifyOtp(
-            @RequestParam String email,
-            @RequestParam String otp,
-            Model model){
+    public String verifyOtp( @RequestParam String email, @RequestParam String otp,Model model){
 
-        User user =
-                userRepo.findByEmail(email);
+        User user =  userRepo.findByEmail(email);
 
         if(user==null){
             model.addAttribute("error","User not found");
             return "verify_otp";
         }
 
-        String entered =
-                otp.trim();
+        String entered = otp.trim();
 
-        String saved =
-                user.getResetOtp()==null ?
-                        "" :
-                        user.getResetOtp().trim();
+        String saved =  user.getResetOtp()==null ? "" : user.getResetOtp().trim();
 
-        System.out.println(
-                "Entered:"+otp
-        );
+        System.out.println( "Entered:"+otp );
 
         System.out.println(
                 "Saved:"+user.getResetOtp()
