@@ -20,6 +20,10 @@
         Verify OTP
     </button>
 
+    <p th:if="${error}"
+       style="color:red"
+       th:text="${error}">
+    </p>
 </form>
 </body>
 </html>
