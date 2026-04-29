@@ -348,6 +348,7 @@ public class CouponService {
                     coupon.getRedemptionCount()+1
             );
 
+            coupon.setUsed(true);
             repo.save(coupon);
 
         }

@@ -68,8 +68,8 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
           <div class="mt-4 dark:bg-slate-800">
             <p class="text-sm text-gray-800 mb-1 dark:text-white">Coupon Code</p>
             <div class="flex items-center justify-between bg-gray-100 p-3 rounded-xl">
-                <p class="text-sm tracking-widest">
-                    ••••••
+                <p class="text-sm tracking-widest dark:text-black">
+                    &#9679;&#9679;&#9679;&#9679;&#9679;&#9679;
                     <span  class="font-semibold text-gray-800
                             dark:text-DarkSlateBlue dark:placeholder-black-700"
                             th:text="${#strings.substring(
@@ -115,8 +115,7 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
             </p>
 
             <!-- Info -->
-            <div class="mt-4 space-y-2 text-sm text-gray-700 dark:text-white-800">
-
+            <div class="mt-4 space-y-2 text-sm text-gray-900 dark:text-white-950">
                 <p>• Valid for limited time</p>
                 <p>• One-time use only</p>
                 <p>• Applicable on selected products</p>
@@ -124,12 +123,11 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
             </div>
             <!-- Voting -->
             <div class="mt-8 flex justify-center gap-10 dark:text-white-900">
-
                 <a th:href="@{/upvote/{id}(id=${coupon.id})}"
                    class="flex items-center gap-2 dark:text-white">
 
-                    <img
-                            th:src="${userVote == 'LIKE'} ?
+                    <img th:src="${userVote == 'LIKE'}
+                        ?
 'https://res.cloudinary.com/dpxhldb4y/image/upload/v1777275997/like-fill_khxkl4.png'
 :
 'https://res.cloudinary.com/dpxhldb4y/image/upload/v1777275997/like-outline_zlecui.png'"
@@ -155,12 +153,9 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
                           th:text="${coupon.downvotes}">
                         0
                         </span>
-
                 </a>
 
-
             </div>
-
 
             <!-- If redeem url exists -->
             <a th:if="${coupon.redeemNowUrl != null and !#strings.isEmpty(coupon.redeemNowUrl)}"

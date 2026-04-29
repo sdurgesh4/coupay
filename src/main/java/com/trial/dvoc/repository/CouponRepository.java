@@ -9,4 +9,5 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
     List<Coupon> findByBrandContainingIgnoreCase(String brand);
     List<Coupon> findByCategoryIgnoreCase(String category);
+    List<Coupon> findByUsedFalse();
 }

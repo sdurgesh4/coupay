@@ -107,17 +107,14 @@ public class CouponController {
         if(user==null) return "redirect:/login";
 
         service.claimCoupon( id, user );
-        return "redirect:/reveal/"+id;
+        return "redirect:/reveal/"+id+"?claimed=1";
     }
 
     @GetMapping("/reveal/{id}")
-    public String revealCoupon(
-            @PathVariable Long id,
-            HttpSession session,
+    public String revealCoupon(@PathVariable Long id, HttpSession session,
             Model model){
 
-        User user=
-                (User)session.getAttribute("user");
+        User user = (User)session.getAttribute("user");
 
         if(user==null)
             return "redirect:/login";
