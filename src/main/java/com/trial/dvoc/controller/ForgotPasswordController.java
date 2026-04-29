@@ -97,12 +97,8 @@ public class ForgotPasswordController {
             return "forgot_password";
         }
 
-
         return "verify_otp";
     }
-
-
-
 
     @PostMapping("/verify-otp")
     public String verifyOtp(
@@ -115,58 +111,34 @@ public class ForgotPasswordController {
                         "resetEmail"
                 );
 
-
         if(email==null){
-
             model.addAttribute(
                     "error",
                     "Session expired. Start again."
             );
-
             return "forgot_password";
         }
 
-
-        User user =
-                userRepo.findByEmail(email);
-
+        User user =  userRepo.findByEmail(email);
 
         if(user==null){
-
             model.addAttribute(
                     "error",
                     "User not found"
             );
-
             return "verify_otp";
         }
 
-
-        String entered =
-                otp.trim();
-
-        String saved =
-                user.getResetOtp()==null
+        String entered = otp.trim();
+        String saved = user.getResetOtp()==null
                         ? ""
                         : user.getResetOtp()
                           .trim();
 
+        System.out.println("Entered OTP: "  + entered );
+        System.out.println("Saved OTP: " + saved );
 
-        System.out.println(
-                "Entered OTP: "
-                        + entered
-        );
-
-        System.out.println(
-                "Saved OTP: "
-                        + saved
-        );
-
-
-        if(
-                !entered.equals(saved)
-        ){
-
+        if(!entered.equals(saved) ){
             model.addAttribute(
                     "error",
                     "Invalid OTP"
@@ -175,30 +147,15 @@ public class ForgotPasswordController {
             return "verify_otp";
         }
 
-
-
-        if(
-                user.getOtpExpiry()
-                        .isBefore(
-                                LocalDateTime.now()
-                        )
-        ){
-
+        if( user.getOtpExpiry().isBefore(LocalDateTime.now() ) ){
             model.addAttribute(
                     "error",
                     "OTP expired"
             );
-
             return "verify_otp";
         }
-
-
         return "reset_password";
     }
-
-
-
-
 
     @PostMapping("/reset-password")
     public String resetPassword(
@@ -232,15 +189,10 @@ public class ForgotPasswordController {
                 password
         );
 
-
         user.setResetOtp(null);
-
         user.setOtpExpiry(null);
 
-
         userRepo.save(user);
-
-
         session.removeAttribute(
                 "resetEmail"
         );

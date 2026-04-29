@@ -64,6 +64,29 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
                 <span th:text="${coupon.description}"></span>
             </h3>
 
+            <!-- coupon code -->
+            <div class="mt-4 dark:bg-slate-800">
+                <p class="text-sm text-gray-800 mb-1 dark:text-white">Coupon Code</p>
+                <div class="flex items-center justify-between bg-gray-100 p-3 rounded-xl">
+                <p class="text-xl tracking-widest">
+                    ••••••••
+                    <span id="codeText"
+                          class="font-semibold text-gray-800
+                            dark:text-DarkSlateBlue dark:placeholder-black-700"
+                          th:text="${#strings.substring(
+                                coupon.couponCode,
+                                coupon.couponCode.length()-3 )}">
+                    </span>
+                </p>
+                <a th:href="@{/buy/{id}(id=${coupon.id})}"
+                        class="mt-4 bg-blue-600 text-white
+                                px-3 py-3 rounded-full font-medium">
+                    Reveal Code
+                </a>
+
+                </div>
+            </div>
+            <!--
             <div class="mt-4 dark:bg-slate-800">
                  <p class="text-sm text-gray-800 mb-1 dark:text-white">Coupon Code</p>
 
@@ -83,6 +106,7 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
                     Copied!
                 </span>
             </div>
+            -->
 
             <p class="text-sm text-red-500 mt-2">
                 Expires on:

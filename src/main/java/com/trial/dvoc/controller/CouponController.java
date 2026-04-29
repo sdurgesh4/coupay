@@ -80,7 +80,8 @@ public class CouponController {
         return "index";
     }
 
-    // Buy
+/*
+// Buy
     @GetMapping("/buy/{id}")
     public String buyCoupon(@PathVariable Long id,
                             HttpSession session) {
@@ -97,6 +98,48 @@ public class CouponController {
 
         return "redirect:/my-coupons";
     }
+    */
+
+    @GetMapping("/buy/{id}")
+    public String buyCoupon( @PathVariable Long id, HttpSession session){
+
+        User user= (User)session.getAttribute("user");
+        if(user==null) return "redirect:/login";
+
+        service.claimCoupon(
+                id,
+                user
+        );
+
+        return "redirect:/reveal/"+id;
+    }
+
+    @GetMapping("/reveal/{id}")
+    public String revealCoupon(
+            @PathVariable Long id,
+            HttpSession session,
+            Model model){
+
+        User user=
+                (User)session.getAttribute("user");
+
+        if(user==null)
+            return "redirect:/login";
+
+        if(!service.hasClaimed(id,user)){
+            return "redirect:/";
+        }
+
+        Coupon coupon=
+                service.getCouponById(id);
+
+        model.addAttribute(
+                "coupon",
+                coupon
+        );
+
+        return "reveal-coupon";
+    }
 
     // My Coupons
     @GetMapping("/my-coupons")
@@ -105,7 +148,7 @@ public class CouponController {
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
 
-        model.addAttribute("coupons", service.getUserCoupons(user));
+        model.addAttribute("coupons", service.getClaimedCoupons(user) );
 
         return "my-coupons";
     }

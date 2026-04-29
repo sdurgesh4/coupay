@@ -1,10 +1,13 @@
 package com.trial.dvoc.service;
 
+import com.trial.dvoc.model.Claim;
 import com.trial.dvoc.model.Coupon;
 import com.trial.dvoc.model.User;
 import com.trial.dvoc.model.Vote;
+import com.trial.dvoc.repository.ClaimRepository;
 import com.trial.dvoc.repository.CouponRepository;
 import com.trial.dvoc.repository.VoteRepository;
+import jakarta.transaction.Transactional;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +22,7 @@ public class CouponService {
     private final CouponRepository repo;
 
     private final VoteRepository voteRepo;
+    private final ClaimRepository claimRepo;
 
     public CouponService(CouponRepository repo, VoteRepository voteRepo) {
         this.repo = repo;
@@ -308,6 +312,70 @@ public class CouponService {
             c.setReported(false);
             repo.save(c);
         }
+    }
+
+    @Transactional
+    public void claimCoupon(
+            Long couponId,
+            User user){
+
+        Coupon coupon=
+                repo.findById(couponId)
+                        .orElse(null);
+
+        if(coupon==null) return;
+
+
+        Claim existing=
+                claimRepo.findByUserAndCoupon(
+                        user,
+                        coupon
+                ).orElse(null);
+
+
+        if(existing==null){
+
+            Claim claim=
+                    new Claim();
+
+            claim.setUser(user);
+            claim.setCoupon(coupon);
+
+            claimRepo.save(claim);
+
+            coupon.setRedemptionCount(
+                    coupon.getRedemptionCount()+1
+            );
+
+            repo.save(coupon);
+
+        }
+
+    }
+
+    public boolean hasClaimed(
+            Long couponId,
+            User user){
+
+        Coupon c=
+                repo.findById(couponId).orElse(null);
+
+        if(c==null) return false;
+
+        return claimRepo
+                .findByUserAndCoupon(user,c)
+                .isPresent();
+
+    }
+
+    public List<Coupon> getClaimedCoupons(
+            User user){
+
+        return claimRepo.findByUser(user)
+                .stream()
+                .map(Claim::getCoupon)
+                .toList();
+
     }
 
 }
