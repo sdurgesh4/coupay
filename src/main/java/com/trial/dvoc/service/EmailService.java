@@ -1,44 +1,76 @@
 package com.trial.dvoc.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 @Service
 public class EmailService {
 
-        @Autowired
-        JavaMailSender mailSender;
+    public void sendOtp( String to, String otp )throws Exception{
 
-        @Value("${BREVO_FROM}")
-        private String fromEmail;
+        String apiKey= System.getenv("BREVO_API_KEY");
 
-        public void sendOtp(
-                String to,
-                String otp
-        ){
+        String from=System.getenv("BREVO_FROM" );
 
-            SimpleMailMessage msg=
-                    new SimpleMailMessage();
+        String json= """
+            {
+                "sender":{
+                "email":"%s"
+                },
+                "to":[
+                {
+                "email":"%s"
+                }
+                ],
+                "subject":"Coupay Password Reset OTP",
+                "htmlContent":
+                "<h2>Your OTP is %s</h2><p>Valid for 10 mins</p>"
+                }
+            """.formatted(
+                        from,
+                        to,
+                        otp
+                );
 
-            msg.setFrom(
-                    System.getenv("BREVO_FROM")
-            );
+        HttpRequest request =
+                HttpRequest.newBuilder()
+                        .uri(
+                                URI.create(
+                                        "https://api.brevo.com/v3/smtp/email"
+                                )
+                        )
+                        .header(
+                                "accept",
+                                "application/json"
+                        )
+                        .header(
+                                "content-type",
+                                "application/json"
+                        )
+                        .header(
+                                "api-key",
+                                apiKey
+                        )
+                        .POST(
+                                HttpRequest.BodyPublishers.ofString(
+                                        json
+                                )
+                        ).build();
 
-            msg.setTo(to);
+        HttpClient
+                .newHttpClient()
+                .send(
+                        request,
+                        HttpResponse
+                                .BodyHandlers
+                                .ofString()
+                );
 
-            msg.setSubject(
-                    "Coupay OTP Reset"
-            );
-
-            msg.setText(
-                    "Your OTP is: "+otp
-            );
-
-            mailSender.send(msg);
-
-        }
+    }
 
 }
