@@ -6,76 +6,55 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="
-min-h-screen
-flex items-center justify-center
-bg-gray-100
-dark:bg-slate-950
-p-6">
-<p th:text="${email}"></p>
-<div class="
-w-full max-w-md
-bg-white dark:bg-slate-800
-rounded-3xl shadow-xl p-8">
+<body class="min-h-screen flex items-center justify-center
+            bg-gray-100
+            dark:bg-slate-950  p-6">
 
-    <h2 class="
-text-3xl font-bold text-center mb-2
-dark:text-white">
-        Verify OTP
-    </h2>
+        <p th:text="${email}"></p>
 
-    <p class="
-text-center text-gray-500
-dark:text-slate-300 mb-6">
-        Check your email and enter OTP
-    </p>
+        <div class=" w-full max-w-md
+        bg-white dark:bg-slate-800
+        rounded-3xl shadow-xl p-8">
+
+            <h2 class=" text-3xl font-bold text-center mb-2
+        dark:text-white">  Verify OTP   </h2>
+
+            <p class="text-center text-gray-500
+        dark:text-slate-300 mb-6">
+                Check your email and enter OTP
+            </p>
 
 
-    <p
-            th:if="${error}"
-            class="
-bg-red-100 text-red-600
-rounded-xl p-3 mb-4 text-center"
-            th:text="${error}">
-    </p>
+            <p th:if="${error}"
+                    class="bg-red-100 text-red-600
+                        rounded-xl p-3 mb-4 text-center"
+                    th:text="${error}">
+            </p>
 
 
-    <form
-            action="/verify-otp"
+    <form   action="/verify-otp"
             method="post"
             class="space-y-5">
 
-        <input
-                type="hidden"
-                name="email"
-                th:value="${email}">
-
-
-        <input
-                name="otp"
+        <input  name="otp"
                 maxlength="6"
                 placeholder="Enter 6-digit OTP"
                 required
-                class="
-w-full text-center
-tracking-[8px]
-text-2xl
-p-4 rounded-2xl border
-dark:bg-slate-700
-dark:text-white">
+                class="w-full text-center
+                    tracking-[8px]
+                    text-2xl
+                    p-4 rounded-2xl border
+                    dark:bg-slate-700
+                    dark:text-white">
 
-
-        <button
-                class="
-w-full bg-indigo-600
-hover:bg-indigo-700
-text-white p-4 rounded-2xl
-font-semibold">
+        <button  class="
+                    w-full bg-indigo-600
+                    hover:bg-indigo-700
+                    text-white p-4 rounded-2xl
+                    font-semibold">
             Verify OTP
         </button>
-
     </form>
-
 </div>
 
 </body>

@@ -5,6 +5,7 @@ import com.trial.dvoc.repository.UserRepository;
 import com.trial.dvoc.service.EmailService;
 
 import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,124 +18,180 @@ import java.util.Random;
 public class ForgotPasswordController {
 
     @Autowired
-    UserRepository userRepo;
+    private UserRepository userRepo;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
+
+
 
     @GetMapping("/forgot-password")
-    public String forgotPage(){
+    public String forgotPage() {
         return "forgot_password";
     }
+
+
 
     @PostMapping("/send-otp")
     public String sendOtp(
             @RequestParam String email,
             HttpSession session,
-            Model model
-    ){
+            Model model) {
 
-        User user=
+        User user =
                 userRepo.findByEmail(email);
 
-        if(user==null){
+        if (user == null) {
+
             model.addAttribute(
                     "error",
                     "Email not found"
             );
+
             return "forgot_password";
         }
 
-        String otp=
+
+        String otp =
                 String.valueOf(
                         100000 +
-                                new Random().nextInt(900000)
+                                new Random()
+                                        .nextInt(900000)
                 );
 
-        session.setAttribute(
-                "otp",
+
+        user.setResetOtp(
                 otp
         );
 
+        user.setOtpExpiry(
+                LocalDateTime.now()
+                        .plusMinutes(10)
+        );
+
+        userRepo.save(user);
+
+
         session.setAttribute(
-                "email",
+                "resetEmail",
                 email
         );
 
-        try{
+
+        try {
+
             emailService.sendOtp(
                     email,
                     otp
             );
-        }catch(Exception e){
+
+        } catch (Exception e) {
 
             e.printStackTrace();
 
             model.addAttribute(
                     "error",
-                    "Mail service unavailable"
+                    "Failed to send OTP"
             );
 
             return "forgot_password";
         }
 
+
         return "verify_otp";
     }
 
 
-    @PostMapping("/verify-otp")
-    public String verifyOtp( @RequestParam String email, @RequestParam String otp,Model model){
 
-        User user =  userRepo.findByEmail(email);
+
+    @PostMapping("/verify-otp")
+    public String verifyOtp(
+            @RequestParam String otp,
+            HttpSession session,
+            Model model) {
+
+        String email =
+                (String) session.getAttribute(
+                        "resetEmail"
+                );
+
+
+        if(email==null){
+
+            model.addAttribute(
+                    "error",
+                    "Session expired. Start again."
+            );
+
+            return "forgot_password";
+        }
+
+
+        User user =
+                userRepo.findByEmail(email);
+
 
         if(user==null){
-            model.addAttribute("error","User not found");
+
+            model.addAttribute(
+                    "error",
+                    "User not found"
+            );
+
             return "verify_otp";
         }
 
-        String entered = otp.trim();
 
-        String saved =  user.getResetOtp()==null ? "" : user.getResetOtp().trim();
+        String entered =
+                otp.trim();
 
-        System.out.println( "Entered:"+otp );
+        String saved =
+                user.getResetOtp()==null
+                        ? ""
+                        : user.getResetOtp()
+                          .trim();
+
 
         System.out.println(
-                "Saved:"+user.getResetOtp()
+                "Entered OTP: "
+                        + entered
         );
 
-        if(!entered.equals(saved)){
+        System.out.println(
+                "Saved OTP: "
+                        + saved
+        );
+
+
+        if(
+                !entered.equals(saved)
+        ){
+
             model.addAttribute(
                     "error",
                     "Invalid OTP"
             );
-            model.addAttribute(
-                    "email",
-                    email
-            );
+
             return "verify_otp";
         }
+
+
 
         if(
                 user.getOtpExpiry()
                         .isBefore(
-                                java.time.LocalDateTime.now()
+                                LocalDateTime.now()
                         )
         ){
+
             model.addAttribute(
                     "error",
                     "OTP expired"
             );
-            model.addAttribute(
-                    "email",
-                    email
-            );
+
             return "verify_otp";
         }
 
-        model.addAttribute(
-                "email",
-                email
-        );
 
         return "reset_password";
     }
@@ -142,21 +199,52 @@ public class ForgotPasswordController {
 
 
 
+
     @PostMapping("/reset-password")
     public String resetPassword(
-            @RequestParam String email,
-            @RequestParam String password){
+            @RequestParam String password,
+            HttpSession session,
+            Model model) {
 
-        User user=
+        String email =
+                (String) session.getAttribute(
+                        "resetEmail"
+                );
+
+
+        if(email==null){
+
+            return "redirect:/forgot-password";
+        }
+
+
+        User user =
                 userRepo.findByEmail(email);
+
+
+        if(user==null){
+
+            return "redirect:/forgot-password";
+        }
+
 
         user.setPassword(
                 password
         );
 
+
         user.setResetOtp(null);
 
+        user.setOtpExpiry(null);
+
+
         userRepo.save(user);
+
+
+        session.removeAttribute(
+                "resetEmail"
+        );
+
 
         return "redirect:/login";
     }
