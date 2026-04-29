@@ -2,12 +2,25 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Reveal Coupon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config={
+            darkMode:'class'
+        }
+    </script>
+
+    <script>
+        if(localStorage.theme==="dark"){
+            document.documentElement
+                .classList.add("dark");
+        }
+    </script>
 </head>
 
 <body class="bg-gray-100
 flex items-center justify-center
-min-h-screen">
+min-h-screen dark:bg-slate-800 dark:text-white dark:border-slate-600">
 
 <div class="bg-white p-8 rounded-3xl shadow
 text-center max-w-md">
@@ -17,33 +30,17 @@ text-center max-w-md">
     </h2>
 
     <div class="text-3xl font-mono
-bg-green-50 p-4 rounded-2xl mb-5"
-         th:text="${coupon.couponCode}">
-    </div>
+            bg-green-50 p-4 rounded-2xl mb-5"
+                     th:text="${coupon.couponCode}">
+                </div>
 
     <button
             onclick="copyCode()"
-            class="bg-gray-900 text-white
-px-5 py-3 rounded-full">
-
+            class="bg-gray-900 text-white px-5 py-3 rounded-full">
         Copy Code
-
     </button>
 
-
-    <a
-            th:if="${coupon.redeemNowUrl!=null}"
-            th:href="${coupon.redeemNowUrl}"
-            target="_blank"
-            class="block mt-4 bg-blue-600
-text-white p-3 rounded-full">
-
-        Visit Store
-
-    </a>
-
 </div>
-
 
 <script>
     function copyCode(){

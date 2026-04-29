@@ -106,11 +106,7 @@ public class CouponController {
         User user= (User)session.getAttribute("user");
         if(user==null) return "redirect:/login";
 
-        service.claimCoupon(
-                id,
-                user
-        );
-
+        service.claimCoupon( id, user );
         return "redirect:/reveal/"+id;
     }
 
@@ -130,8 +126,7 @@ public class CouponController {
             return "redirect:/";
         }
 
-        Coupon coupon=
-                service.getCouponById(id);
+        Coupon coupon= service.getCouponById(id);
 
         model.addAttribute(
                 "coupon",
