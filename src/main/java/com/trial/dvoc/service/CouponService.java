@@ -24,9 +24,10 @@ public class CouponService {
     private final VoteRepository voteRepo;
     private final ClaimRepository claimRepo;
 
-    public CouponService(CouponRepository repo, VoteRepository voteRepo) {
+    public CouponService(CouponRepository repo, VoteRepository voteRepo, ClaimRepository claimRepo) {
         this.repo = repo;
         this.voteRepo = voteRepo;
+        this.claimRepo = claimRepo;
     }
 
     public List<Coupon> getAllCoupons() {
