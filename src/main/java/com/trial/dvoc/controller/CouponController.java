@@ -101,34 +101,43 @@ public class CouponController {
     */
 
     @GetMapping("/buy/{id}")
-    public String buyCoupon( @PathVariable Long id, HttpSession session){
+    public String buyCoupon(@PathVariable Long id, HttpSession session){
 
-        User user= (User)session.getAttribute("user");
-        if(user==null) return "redirect:/login";
+        User user = (User) session.getAttribute("user");
+        if(user == null) return "redirect:/login";
 
-        service.claimCoupon( id, user );
-        return "redirect:/reveal/"+id+"?claimed=1";
+        Coupon c = service.buyCoupon(id, user);
+        if(c == null) return "redirect:/";
+
+        if(c.getRedeemNowUrl()!=null &&
+                !c.getRedeemNowUrl().isBlank()){
+
+            return "redirect:" + c.getRedeemNowUrl();
+        }
+
+        return "redirect:/reveal/" + id;
     }
 
+
     @GetMapping("/reveal/{id}")
-    public String revealCoupon(@PathVariable Long id, HttpSession session,
-            Model model){
+    public String revealCoupon(@PathVariable Long id,
+                               Model model,
+                               HttpSession session){
 
-        User user = (User)session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
+        if(user == null) return "redirect:/login";
 
-        if(user==null)
-            return "redirect:/login";
+        Coupon coupon = service.getCouponById(id);
 
-        if(!service.hasClaimed(id,user)){
+        if(coupon == null) return "redirect:/";
+
+        // only owner can see
+        if(coupon.getUser()==null ||
+                !coupon.getUser().getId().equals(user.getId())){
             return "redirect:/";
         }
 
-        Coupon coupon= service.getCouponById(id);
-
-        model.addAttribute(
-                "coupon",
-                coupon
-        );
+        model.addAttribute("coupon", coupon);
 
         return "reveal-coupon";
     }

@@ -28,7 +28,7 @@ public class Coupon {
     private String redeemNowUrl;
 
     private LocalDate expiryDate;
-    private int redemptionCount = 0;
+    //private int redemptionCount = 0;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

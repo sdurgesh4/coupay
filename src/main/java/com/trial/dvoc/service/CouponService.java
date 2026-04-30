@@ -7,9 +7,12 @@ import com.trial.dvoc.model.Vote;
 import com.trial.dvoc.repository.ClaimRepository;
 import com.trial.dvoc.repository.CouponRepository;
 import com.trial.dvoc.repository.VoteRepository;
+import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -24,10 +27,13 @@ public class CouponService {
     private final VoteRepository voteRepo;
     private final ClaimRepository claimRepo;
 
-    public CouponService(CouponRepository repo, VoteRepository voteRepo, ClaimRepository claimRepo) {
+    private final CouponService service;
+
+    public CouponService(CouponRepository repo, VoteRepository voteRepo, ClaimRepository claimRepo, CouponService service) {
         this.repo = repo;
         this.voteRepo = voteRepo;
         this.claimRepo = claimRepo;
+        this.service = service;
     }
 
     public List<Coupon> getAllCoupons() {
@@ -100,15 +106,15 @@ public class CouponService {
     }
 
     public void deleteCoupon(Long id) {
-        repo.deleteById(id);
-    }
 
-    public void markAsUsed(Long id) {
-        Coupon c = repo.findById(id).orElse(null);
-        if (c != null) {
-            c.setUsed(true);
-            repo.save(c);
-        }
+        Coupon coupon = repo.findById(id).orElse(null);
+        if(coupon == null) return;
+
+        claimRepo.findAll().stream()
+                .filter(c -> c.getCoupon().getId().equals(id))
+                .forEach(claimRepo::delete);
+
+        repo.delete(coupon);
     }
 
     public List<Coupon> searchCoupons(String brand) {
@@ -118,15 +124,23 @@ public class CouponService {
                 .toList();
     }
 
-    public Coupon buyCoupon(Long couponId, User user) {
+    @Transactional
+    public Coupon buyCoupon(Long couponId, User user){
 
-        Coupon c=repo.findById(couponId).orElse(null);
-        if(c!=null && !c.isUsed()){
-            c.setUsed(true);
-            c.setUser(user);
-            repo.save(c);
+        Coupon coupon = repo.findById(couponId).orElse(null);
+
+        if(coupon == null) return null;
+
+        if(coupon.isUsed()){
+            return coupon;
         }
-        return c;
+
+        coupon.setUsed(true);
+        coupon.setUser(user);
+
+        repo.save(coupon);
+
+        return coupon;
     }
 
     public List<Coupon> getUserCoupons(User user) {
@@ -135,6 +149,7 @@ public class CouponService {
                 .filter(c -> c.getUser() != null && c.getUser().getId().equals(user.getId()))
                 .toList();
     }
+
     public Coupon getCouponById(Long id) {
         return repo.findById(id).orElse(null);
     }
@@ -317,49 +332,34 @@ public class CouponService {
     }
 
     @Transactional
-    public void claimCoupon(
-            Long couponId,
-            User user){
+    public void claimCoupon(Long couponId, User user){
 
-        Coupon coupon=
-                repo.findById(couponId)
-                        .orElse(null);
+        Coupon coupon = repo.findById(couponId).orElse(null);
 
-        if(coupon==null) return;
+        if(coupon == null || user == null) return;
 
-        Claim existing=
-                claimRepo.findByUserAndCoupon(
-                        user,
-                        coupon
-                ).orElse(null);
+        Claim existing = claimRepo
+                .findByUserAndCoupon(user, coupon)
+                .orElse(null);
+
+        if(existing != null) return;
+
+        Claim claim = new Claim();
+        claim.setUser(user);
+        claim.setCoupon(coupon);
+
+        claimRepo.save(claim);
+
+        // REMOVE THIS (causing crash if DB not updated)
+        // coupon.setRedemptionCount(
+        //     coupon.getRedemptionCount()+1
+        // );
 
 
-        if(existing==null){
-
-            Claim claim=
-                    new Claim();
-
-            claim.setUser(user);
-            claim.setCoupon(coupon);
-            claim.setUsed(true);
-
-            claimRepo.save(claim);
-
-            coupon.setRedemptionCount(
-                    coupon.getRedemptionCount()+1
-            );
-
-//            coupon.setUsed(true);
-//            coupon.setUser(user);
-            repo.save(coupon);
-
-        }
-
+        repo.save(coupon);
     }
 
-    public boolean hasClaimed(
-            Long couponId,
-            User user){
+    public boolean hasClaimed( Long couponId, User user){
 
         Coupon c=
                 repo.findById(couponId).orElse(null);
