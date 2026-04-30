@@ -92,7 +92,6 @@ public class AuthController {
         model.addAttribute("usedCount", usedCount );
         model.addAttribute("totalCoupons", couponService.totalCoupons());
         model.addAttribute("activeCoupons", couponService.activeCoupons());
-        model.addAttribute("usedCoupons", couponService.userUsedCoupons(user));
 
         return "profile";
     }

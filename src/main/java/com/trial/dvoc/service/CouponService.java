@@ -278,9 +278,7 @@ public class CouponService {
         existing.setUpvote(
                 isUpvote
         );
-
         voteRepo.save(existing);
-
         repo.save(coupon);
     }
 
@@ -300,11 +298,14 @@ public class CouponService {
         return repo.findAll().stream().filter(c -> !c.isUsed()).count();
     }
 
-    public long userUsedCoupons(User user) {
+    public List<Coupon> userUsedCoupons(User user) {
         return repo.findAll()
                 .stream()
-                .filter(c -> c.getUser() != null && c.getUser().getId().equals(user.getId()))
-                .count();
+                .filter(c ->
+                        c.getUser() != null &&
+                                c.getUser().getId().equals(user.getId()) &&
+                                c.isUsed()
+                ).toList();
     }
 
     public void unreportCoupon(Long id) {
@@ -341,14 +342,14 @@ public class CouponService {
             claim.setUser(user);
             claim.setCoupon(coupon);
 
-            claimRepo.save(claim);
+            claimRepo.save(new Claim(user, coupon));
 
             coupon.setRedemptionCount(
                     coupon.getRedemptionCount()+1
             );
 
-            coupon.setUsed(true);
-            coupon.setUser(user);
+//            coupon.setUsed(true);
+//            coupon.setUser(user);
             repo.save(coupon);
 
         }
