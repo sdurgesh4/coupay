@@ -28,7 +28,7 @@
 dark:bg-slate-800 dark:border dark:border-slate-600
 dark:text-white">
 
-<div class="max-w-md mx-auto bg-white min-h-screen dark:bg-slate-800">
+<div class="max-w-md mx-auto bg-white min-h-screen dark:bg-slate-800 dark:text-white">
 
     <!-- Header -->
     <div class="bg-blue-600 text-white p-5 rounded-b-3xl
@@ -110,19 +110,19 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
                 Expires on:
                 <span th:text="${coupon.expiryDate}"></span>
             </p>
-            <p class="text-gray-500 mt-2 dark:text-white-800">
+            <p class="text-gray-500 mt-2 dark:text-white">
                 Use this coupon at checkout.
             </p>
 
             <!-- Info -->
-            <div class="mt-4 space-y-2 text-sm text-gray-900 dark:text-white-950">
+            <div class="mt-4 space-y-2 text-sm text-gray-900 dark:text-white">
                 <p>• Valid for limited time</p>
                 <p>• One-time use only</p>
                 <p>• Applicable on selected products</p>
 
             </div>
             <!-- Voting -->
-            <div class="mt-8 flex justify-center gap-10 dark:text-white-900">
+            <div class="mt-8 flex justify-center gap-10 dark:text-white">
                 <a th:href="@{/upvote/{id}(id=${coupon.id})}"
                    class="flex items-center gap-2 dark:text-white">
 
@@ -131,7 +131,7 @@ dark:bg-slate-900 dark:border-b dark:border-slate-700 p-6 rounded-b-3xl">
 'https://res.cloudinary.com/dpxhldb4y/image/upload/v1777275997/like-fill_khxkl4.png'
 :
 'https://res.cloudinary.com/dpxhldb4y/image/upload/v1777275997/like-outline_zlecui.png'"
-                            class="w-6 h-6">
+                            class="w-6 h-6 text-blue">
 
                     <span class="text-sm font-medium text-gray-700 dark:text-white"
                           th:text="${coupon.upvotes}">
