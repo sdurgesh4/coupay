@@ -55,7 +55,6 @@ public class AiImportController {
                 );
                 break;
             }
-
         }
 
         /* ---------- COUPON CODE ---------- */

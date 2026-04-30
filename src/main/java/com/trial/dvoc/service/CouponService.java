@@ -326,7 +326,6 @@ public class CouponService {
 
         if(coupon==null) return;
 
-
         Claim existing=
                 claimRepo.findByUserAndCoupon(
                         user,
@@ -349,6 +348,7 @@ public class CouponService {
             );
 
             coupon.setUsed(true);
+            coupon.setUser(user);
             repo.save(coupon);
 
         }

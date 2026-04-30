@@ -2,6 +2,7 @@ package com.trial.dvoc.controller;
 
 import com.trial.dvoc.model.Coupon;
 import com.trial.dvoc.model.User;
+import com.trial.dvoc.repository.CouponRepository;
 import com.trial.dvoc.repository.UserRepository;
 import com.trial.dvoc.service.CouponService;
 import com.trial.dvoc.service.ImageService;
@@ -24,12 +25,14 @@ public class AuthController {
     private final ImageService imageService;
     private final UserRepository userRepo;
     private final CouponService couponService;
+    private final CouponRepository couponRepo;
 
-    public AuthController(UserRepository userRepo, UserService service, ImageService imageService, CouponService couponService){
+    public AuthController(UserRepository userRepo, UserService service, ImageService imageService, CouponService couponService, CouponRepository couponRepo){
         this.userRepo=userRepo;
         this.service=service;
         this.imageService=imageService;
         this.couponService = couponService;
+        this.couponRepo = couponRepo;
     }
     @GetMapping("/register")
     public String showRegister(Model model) {
@@ -84,6 +87,9 @@ public class AuthController {
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
 
+        long usedCount = couponRepo.countByUserAndUsedTrue(user);
+
+        model.addAttribute("usedCount", usedCount );
         model.addAttribute("totalCoupons", couponService.totalCoupons());
         model.addAttribute("activeCoupons", couponService.activeCoupons());
         model.addAttribute("usedCoupons", couponService.userUsedCoupons(user));
