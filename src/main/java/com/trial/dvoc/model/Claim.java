@@ -4,10 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(
-        uniqueConstraints=@UniqueConstraint(
-                columnNames={"user_id","coupon_id"}
-        ))
+@Table(uniqueConstraints=@UniqueConstraint(columnNames={"user_id","coupon_id"}))
 @Data
 public class Claim {
 
@@ -21,5 +18,5 @@ public class Claim {
     @ManyToOne
     private Coupon coupon;
 
-    private boolean revealed=true;
+    private boolean used = true;
 }

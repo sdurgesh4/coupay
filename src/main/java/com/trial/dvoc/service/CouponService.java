@@ -341,8 +341,9 @@ public class CouponService {
 
             claim.setUser(user);
             claim.setCoupon(coupon);
+            claim.setUsed(true);
 
-            claimRepo.save(new Claim(user, coupon));
+            claimRepo.save(claim);
 
             coupon.setRedemptionCount(
                     coupon.getRedemptionCount()+1
