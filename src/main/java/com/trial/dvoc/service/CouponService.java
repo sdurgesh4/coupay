@@ -1,39 +1,26 @@
 package com.trial.dvoc.service;
 
-import com.trial.dvoc.model.Claim;
 import com.trial.dvoc.model.Coupon;
 import com.trial.dvoc.model.User;
 import com.trial.dvoc.model.Vote;
-import com.trial.dvoc.repository.ClaimRepository;
 import com.trial.dvoc.repository.CouponRepository;
 import com.trial.dvoc.repository.VoteRepository;
-import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class CouponService {
 
     private final CouponRepository repo;
-
     private final VoteRepository voteRepo;
-    private final ClaimRepository claimRepo;
 
-    private final CouponService service;
-
-    public CouponService(CouponRepository repo, VoteRepository voteRepo, ClaimRepository claimRepo, CouponService service) {
+    public CouponService(CouponRepository repo, VoteRepository voteRepo) {
         this.repo = repo;
         this.voteRepo = voteRepo;
-        this.claimRepo = claimRepo;
-        this.service = service;
     }
 
     public List<Coupon> getAllCoupons() {
@@ -46,56 +33,46 @@ public class CouponService {
                     LocalDate d1 = c1.getExpiryDate();
                     LocalDate d2 = c2.getExpiryDate();
 
-                    // Handle nulls (no expiry → last)
                     if (d1 == null) return 1;
                     if (d2 == null) return -1;
 
                     boolean e1 = d1.isBefore(today);
                     boolean e2 = d2.isBefore(today);
 
-                    // Active first, expired later
                     if (e1 && !e2) return 1;
                     if (!e1 && e2) return -1;
 
-                    // Same group → sort by date
                     return d1.compareTo(d2);
                 })
                 .toList();
     }
 
     public void saveCoupon(Coupon coupon){
-        coupon.setQrCodeUrl( getCategoryImage( coupon.getCategory() ));
+        coupon.setQrCodeUrl(getCategoryImage(coupon.getCategory()));
         repo.save(coupon);
     }
 
-    private String getCategoryImage( String category){
+    private String getCategoryImage(String category){
 
-        if(category==null){
+        if(category == null){
             return defaultImage();
         }
-        switch( category.toLowerCase() ){
 
+        switch(category.toLowerCase()){
             case "amazon":
                 return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228403/amazon_jjcngb.jpg";
-
             case "flipkart":
                 return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228404/flipkart_fhdz0v.jpg";
-
             case "food":
                 return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228405/food_vhgltm.jpg";
-
             case "travel":
                 return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228406/travel_kx4819.jpg";
-
             case "fashion":
                 return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228405/fashion_hjrxfz.jpg";
-
             case "electronics":
                 return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228404/electronics_banby3.jpg";
-
             case "cosmetics":
                 return "https://res.cloudinary.com/dpxhldb4y/image/upload/v1777228403/cosmetics_ffv8ep.jpg";
-
             default:
                 return defaultImage();
         }
@@ -106,15 +83,7 @@ public class CouponService {
     }
 
     public void deleteCoupon(Long id) {
-
-        Coupon coupon = repo.findById(id).orElse(null);
-        if(coupon == null) return;
-
-        claimRepo.findAll().stream()
-                .filter(c -> c.getCoupon().getId().equals(id))
-                .forEach(claimRepo::delete);
-
-        repo.delete(coupon);
+        repo.deleteById(id);
     }
 
     public List<Coupon> searchCoupons(String brand) {
@@ -146,7 +115,8 @@ public class CouponService {
     public List<Coupon> getUserCoupons(User user) {
         return repo.findAll()
                 .stream()
-                .filter(c -> c.getUser() != null && c.getUser().getId().equals(user.getId()))
+                .filter(c -> c.getUser() != null &&
+                        c.getUser().getId().equals(user.getId()))
                 .toList();
     }
 
@@ -156,6 +126,7 @@ public class CouponService {
 
     public String getExpiryStatus(Coupon c) {
         if (c.getExpiryDate() == null) return "";
+
         long days = ChronoUnit.DAYS.between(LocalDate.now(), c.getExpiryDate());
 
         if (days > 0) {
@@ -193,30 +164,15 @@ public class CouponService {
                 .toList();
     }
 
-    public void vote(
-            Long couponId,
-            User user,
-            boolean isUpvote){
+    public void vote(Long couponId, User user, boolean isUpvote){
 
-        Coupon coupon=
-                repo.findById(couponId)
-                        .orElse(null);
+        Coupon coupon = repo.findById(couponId).orElse(null);
+        if(coupon == null) return;
 
-        if(coupon==null) return;
+        Vote existing = voteRepo.findByUserAndCoupon(user, coupon).orElse(null);
 
-        Vote existing=
-                voteRepo.findByUserAndCoupon(
-                        user,
-                        coupon
-                ).orElse(null);
-
-
-
-        /* FIRST VOTE */
-        if(existing==null){
-
-            Vote vote=new Vote();
-
+        if(existing == null){
+            Vote vote = new Vote();
             vote.setUser(user);
             vote.setCoupon(coupon);
             vote.setUpvote(isUpvote);
@@ -224,75 +180,37 @@ public class CouponService {
             voteRepo.save(vote);
 
             if(isUpvote){
-                coupon.setUpvotes(
-                        coupon.getUpvotes()+1
-                );
-            }else{
-                coupon.setDownvotes(
-                        coupon.getDownvotes()+1
-                );
+                coupon.setUpvotes(coupon.getUpvotes() + 1);
+            } else {
+                coupon.setDownvotes(coupon.getDownvotes() + 1);
             }
 
             repo.save(coupon);
             return;
         }
 
-
-
-        /* CLICK SAME AGAIN = REMOVE VOTE */
-        if(existing.isUpvote()==isUpvote){
+        if(existing.isUpvote() == isUpvote){
 
             if(isUpvote){
-                coupon.setUpvotes(
-                        Math.max(
-                                0,
-                                coupon.getUpvotes()-1
-                        ));
-            }else{
-                coupon.setDownvotes(
-                        Math.max(
-                                0,
-                                coupon.getDownvotes()-1
-                        ));
+                coupon.setUpvotes(Math.max(0, coupon.getUpvotes() - 1));
+            } else {
+                coupon.setDownvotes(Math.max(0, coupon.getDownvotes() - 1));
             }
 
             voteRepo.delete(existing);
-
             repo.save(coupon);
             return;
         }
 
-
-
-        /* SWITCH VOTE */
         if(isUpvote){
-
-            coupon.setUpvotes(
-                    coupon.getUpvotes()+1
-            );
-
-            coupon.setDownvotes(
-                    Math.max(
-                            0,
-                            coupon.getDownvotes()-1
-                    ));
-
-        }else{
-
-            coupon.setDownvotes(
-                    coupon.getDownvotes()+1
-            );
-
-            coupon.setUpvotes(
-                    Math.max(
-                            0,
-                            coupon.getUpvotes()-1
-                    ));
+            coupon.setUpvotes(coupon.getUpvotes() + 1);
+            coupon.setDownvotes(Math.max(0, coupon.getDownvotes() - 1));
+        } else {
+            coupon.setDownvotes(coupon.getDownvotes() + 1);
+            coupon.setUpvotes(Math.max(0, coupon.getUpvotes() - 1));
         }
 
-        existing.setUpvote(
-                isUpvote
-        );
+        existing.setUpvote(isUpvote);
         voteRepo.save(existing);
         repo.save(coupon);
     }
@@ -316,11 +234,10 @@ public class CouponService {
     public List<Coupon> userUsedCoupons(User user) {
         return repo.findAll()
                 .stream()
-                .filter(c ->
-                        c.getUser() != null &&
-                                c.getUser().getId().equals(user.getId()) &&
-                                c.isUsed()
-                ).toList();
+                .filter(c -> c.getUser() != null &&
+                        c.getUser().getId().equals(user.getId()) &&
+                        c.isUsed())
+                .toList();
     }
 
     public void unreportCoupon(Long id) {
@@ -330,56 +247,4 @@ public class CouponService {
             repo.save(c);
         }
     }
-
-    @Transactional
-    public void claimCoupon(Long couponId, User user){
-
-        Coupon coupon = repo.findById(couponId).orElse(null);
-
-        if(coupon == null || user == null) return;
-
-        Claim existing = claimRepo
-                .findByUserAndCoupon(user, coupon)
-                .orElse(null);
-
-        if(existing != null) return;
-
-        Claim claim = new Claim();
-        claim.setUser(user);
-        claim.setCoupon(coupon);
-
-        claimRepo.save(claim);
-
-        // REMOVE THIS (causing crash if DB not updated)
-        // coupon.setRedemptionCount(
-        //     coupon.getRedemptionCount()+1
-        // );
-
-
-        repo.save(coupon);
-    }
-
-    public boolean hasClaimed( Long couponId, User user){
-
-        Coupon c=
-                repo.findById(couponId).orElse(null);
-
-        if(c==null) return false;
-
-        return claimRepo
-                .findByUserAndCoupon(user,c)
-                .isPresent();
-
-    }
-
-    public List<Coupon> getClaimedCoupons(
-            User user){
-
-        return claimRepo.findByUser(user)
-                .stream()
-                .map(Claim::getCoupon)
-                .toList();
-
-    }
-
 }

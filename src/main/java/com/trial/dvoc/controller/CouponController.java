@@ -22,10 +22,14 @@ public class CouponController {
     private final UserService userService;
     private final VoteRepository voteRepo;
 
-    public CouponController(CouponService service, UserService userService, UserRepository userRepo, VoteRepository voteRepo){
-        this.service=service;
-        this.userService=userService;
-        this.userRepo=userRepo;
+    public CouponController(CouponService service,
+                            UserService userService,
+                            UserRepository userRepo,
+                            VoteRepository voteRepo){
+
+        this.service = service;
+        this.userService = userService;
+        this.userRepo = userRepo;
         this.voteRepo = voteRepo;
     }
 
@@ -55,18 +59,21 @@ public class CouponController {
 
     // Save
     @PostMapping("/save")
-    public String saveCoupon(@ModelAttribute Coupon coupon, HttpSession session){    
-        User user= (User)session.getAttribute("user");        
-        if(user==null){
-         return "redirect:/login";
+    public String saveCoupon(@ModelAttribute Coupon coupon,
+                             HttpSession session){
+
+        User user = (User) session.getAttribute("user");
+
+        if(user == null){
+            return "redirect:/login";
         }
-        
-        service.saveCoupon(coupon);        
-        userService.addPoints( user.getId(), 10);
-        
-        /* refresh session copy */
-        User fresh= userRepo.findById( user.getId() ).orElseThrow();
-        session.setAttribute( "user", fresh ); 
+
+        service.saveCoupon(coupon);
+        userService.addPoints(user.getId(), 10);
+
+        User fresh = userRepo.findById(user.getId()).orElseThrow();
+        session.setAttribute("user", fresh);
+
         return "redirect:/profile";
     }
 
@@ -80,26 +87,7 @@ public class CouponController {
         return "index";
     }
 
-/*
-// Buy
-    @GetMapping("/buy/{id}")
-    public String buyCoupon(@PathVariable Long id,
-                            HttpSession session) {
-
-        User user=(User)session.getAttribute("user");
-        if(user==null) return "redirect:/login";
-
-        Coupon c = service.buyCoupon(id,user);
-
-        if(c.getRedeemNowUrl()!=null &&
-                !c.getRedeemNowUrl().isBlank()){
-            return "redirect:" + c.getRedeemNowUrl();
-        }
-
-        return "redirect:/my-coupons";
-    }
-    */
-
+    // BUY / REDEEM / REVEAL (ALL SAME)
     @GetMapping("/buy/{id}")
     public String buyCoupon(@PathVariable Long id, HttpSession session){
 
@@ -109,16 +97,17 @@ public class CouponController {
         Coupon c = service.buyCoupon(id, user);
         if(c == null) return "redirect:/";
 
+        // redirect to store if available
         if(c.getRedeemNowUrl()!=null &&
                 !c.getRedeemNowUrl().isBlank()){
-
             return "redirect:" + c.getRedeemNowUrl();
         }
 
+        // otherwise show code
         return "redirect:/reveal/" + id;
     }
 
-
+    // Reveal page
     @GetMapping("/reveal/{id}")
     public String revealCoupon(@PathVariable Long id,
                                Model model,
@@ -132,7 +121,7 @@ public class CouponController {
         if(coupon == null) return "redirect:/";
 
         // only owner can see
-        if(coupon.getUser()==null ||
+        if(coupon.getUser() == null ||
                 !coupon.getUser().getId().equals(user.getId())){
             return "redirect:/";
         }
@@ -142,78 +131,91 @@ public class CouponController {
         return "reveal-coupon";
     }
 
-    // My Coupons
+    // My Coupons (FIXED)
     @GetMapping("/my-coupons")
     public String myCoupons(Model model, HttpSession session) {
 
         User user = (User) session.getAttribute("user");
         if (user == null) return "redirect:/login";
 
-        model.addAttribute("coupons", service.getClaimedCoupons(user) );
+        // ✅ FIXED (removed claim)
+        model.addAttribute("coupons",
+                service.getUserCoupons(user));
 
         return "my-coupons";
     }
 
+    // Details
     @GetMapping("/coupon/{id}")
-    public String couponDetails( @PathVariable Long id, Model model,HttpSession session){
-        User user= (User)session.getAttribute("user");
+    public String couponDetails(@PathVariable Long id,
+                                Model model,
+                                HttpSession session){
 
-        if(user==null){
+        User user = (User) session.getAttribute("user");
+
+        if(user == null){
             return "redirect:/login";
         }
-        Coupon coupon=   service.getCouponById(id);
-        Vote vote=  voteRepo.findByUserAndCoupon(  user, coupon ).orElse(null);
-        if(vote!=null){
-            model.addAttribute(
-                    "userVote",
-                    vote.isUpvote()
-                            ? "LIKE"
-                            : "DISLIKE"
-            );
+
+        Coupon coupon = service.getCouponById(id);
+
+        Vote vote = voteRepo
+                .findByUserAndCoupon(user, coupon)
+                .orElse(null);
+
+        if(vote != null){
+            model.addAttribute("userVote",
+                    vote.isUpvote() ? "LIKE" : "DISLIKE");
         }
-        model.addAttribute(
-                "coupon",
-                coupon
-        );
+
+        model.addAttribute("coupon", coupon);
+
         return "coupon-details";
     }
 
     // Category
     @GetMapping("/category/{name}")
-    public String filterByCategory(@PathVariable String name, Model model, HttpSession session) {
+    public String filterByCategory(@PathVariable String name,
+                                   Model model,
+                                   HttpSession session){
 
         if (session.getAttribute("user") == null) {
             return "redirect:/login";
         }
 
-        model.addAttribute("coupons", service.getByCategory(name));
+        model.addAttribute("coupons",
+                service.getByCategory(name));
+
         return "index";
     }
 
-    //voting
+    // Voting
     @GetMapping("/upvote/{id}")
-    public String upvote( @PathVariable Long id, HttpSession session){
+    public String upvote(@PathVariable Long id,
+                         HttpSession session){
 
-        User user= (User)session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
 
-        if(user==null)
+        if(user == null)
             return "redirect:/login";
 
-        service.vote(id, user,true );
-        return "redirect:/coupon/"+id;
+        service.vote(id, user, true);
+
+        return "redirect:/coupon/" + id;
     }
 
     @GetMapping("/downvote/{id}")
-    public String downvote( @PathVariable Long id, HttpSession session){
+    public String downvote(@PathVariable Long id,
+                           HttpSession session){
 
-        User user= (User)session.getAttribute("user");
+        User user = (User) session.getAttribute("user");
 
-        if(user==null)
+        if(user == null)
             return "redirect:/login";
 
-        service.vote( id, user,false);
+        service.vote(id, user, false);
 
-        return "redirect:/coupon/"+id;
+        return "redirect:/coupon/" + id;
     }
 
     // Report
@@ -223,10 +225,12 @@ public class CouponController {
         return "redirect:/";
     }
 
+    // Share
     @GetMapping("/share-coupon")
-    public String shareCoupon( @RequestParam(required=false) String text, Model model){
+    public String shareCoupon(@RequestParam(required=false) String text,
+                              Model model){
 
-        model.addAttribute("sharedText", text );
+        model.addAttribute("sharedText", text);
         return "add_coupon";
     }
 }
