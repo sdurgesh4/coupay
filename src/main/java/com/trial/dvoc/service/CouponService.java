@@ -122,7 +122,9 @@ public class CouponService {
                 .toList();
     }
 
-    public void deleteCoupon(Long id){
+    public void deleteCoupon(Long id) {
+
+        voteRepo.deleteByCouponId(id);
         repo.deleteById(id);
     }
 
