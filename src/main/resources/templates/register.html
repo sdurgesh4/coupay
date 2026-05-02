@@ -25,10 +25,34 @@
                 required
                 class="w-full p-3 rounded-xl border mb-3">
 
-        <input type="password" th:field="*{password}"
+        <!--<input type="password" th:field="*{password}"
                placeholder="Password"
-               class="w-full p-3 rounded-xl border mb-3" required>
+               class="w-full p-3 rounded-xl border mb-3" required>-->
 
+        <div class="relative mb-3">
+            <input type="password" th:field="*{password}"
+                   placeholder="Password"
+                   id="password"
+                   class="w-full p-3 rounded-xl border pr-10" required>
+
+            <button type="button"
+                    onclick="togglePassword()"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
+
+                <!-- Eye Icon -->
+                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg"
+                     class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5
+                     c4.477 0 8.268 2.943 9.542 7
+                     -1.274 4.057-5.065 7-9.542 7
+                     -4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+            </button>
+        </div>
         <button class="w-full bg-blue-500 text-white p-3 rounded">
             Register
         </button>
