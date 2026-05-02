@@ -12,4 +12,5 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     List<Coupon> findByCategoryIgnoreCase(String category);
     List<Coupon> findByUsedFalse();
     long countByUserAndUsedTrue(User user);
+    boolean existsByCouponCodeIgnoreCase(String couponCode);
 }

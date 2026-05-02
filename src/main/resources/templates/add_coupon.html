@@ -212,8 +212,6 @@ dark:border-slate-600" required>
 
 </script>
 
-
-
 <div id="importModal"
      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
 
@@ -227,7 +225,7 @@ dark:border-slate-600" required>
                 id="couponRawText"
                 class="w-full border rounded-xl p-3 h-40 text-black"
                 placeholder="Paste coupon text here">
-</textarea>
+        </textarea>
 
         <button
                 onclick="importCoupon()"
@@ -258,51 +256,28 @@ dark:border-slate-600" required>
     ).classList.add("hidden");
     }
 
-    async function importCoupon(){
-    let raw = document.getElementById("couponRawText").value;
+        async function importCoupon(){
 
-    let res=
-    await fetch("/ai-import",{
-    method:"POST",
-    headers:{
-    "Content-Type":
-    "application/x-www-form-urlencoded"
-    },
-    body:
-    "raw="+encodeURIComponent(raw)
-    });
+        let raw = document.getElementById("couponRawText").value;
 
-    let data=
-    await res.json();
+        let res = await fetch("/ai-import",{
+        method:"POST",
+        headers:{
+        "Content-Type":"application/x-www-form-urlencoded"
+            },
+        body:"raw="+encodeURIComponent(raw)
+        });
 
-    document.querySelector(
-    '[name="brand"]'
-    ).value=data.brand || "";
+        let data = await res.json();
 
-    document.querySelector(
-    '[name="description"]'
-    ).value=data.description || "";
+        document.querySelector('[name="brand"]').value = data.brand || "";
+        document.querySelector('[name="description"]').value = data.description || "";
+        document.querySelector('[name="couponCode"]').value = data.couponCode || "";
+        document.querySelector('[name="redeemNowUrl"]').value = data.redeemNowUrl || "";
+        document.querySelector('[name="category"]').value = data.category || "";
+        document.querySelector('[name="expiryDate"]').value = data.expiryDate || "";
 
-    document.querySelector(
-    '[name="couponCode"]'
-    ).value=data.couponCode || "";
-
-    document.querySelector(
-    '[name="redeemNowUrl"]'
-    ).value=
-    data.redeemNowUrl || "";
-
-    document.querySelector(
-    '[name="category"]'
-    ).value=data.category || "";
-
-    document.querySelector(
-    '[name="expiryDate"]'
-    ).value=data.expiryDate || "";
-
-
-    closeImportModal();
-
+        closeImportModal();
     }
 
 </script>

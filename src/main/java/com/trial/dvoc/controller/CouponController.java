@@ -57,17 +57,13 @@ public class CouponController {
         return "add_coupon";
     }
 
-    // Save
     @PostMapping("/save")
     public String saveCoupon(@ModelAttribute Coupon coupon,
                              HttpSession session){
-
         User user = (User) session.getAttribute("user");
+        if(user == null){ return "redirect:/login";  }
 
-        if(user == null){
-            return "redirect:/login";
-        }
-
+        coupon.setUser(user);
         service.saveCoupon(coupon);
         userService.addPoints(user.getId(), 10);
 
