@@ -115,21 +115,19 @@ public class CouponService {
     public Coupon getCouponById(Long id) {
         return repo.findById(id).orElse(null);
     }
-
     public List<Coupon> getAllCoupons(){
         return repo.findAll().stream()
                 .filter(c -> !c.isUsed())
                 .toList();
     }
+
     @Transactional
     public void deleteCoupon(Long id) {
-
         voteRepo.deleteByCouponId(id);
         repo.deleteById(id);
     }
 
     public void vote(Long couponId, User user, boolean isUpvote){
-
         Coupon coupon = repo.findById(couponId).orElse(null);
         if(coupon == null) return;
 
@@ -187,7 +185,8 @@ public class CouponService {
         return repo.findAll().stream()
                 .filter(c ->
                         c.getCategory()!=null &&
-                                c.getCategory().equalsIgnoreCase(category)
+                                c.getCategory().equalsIgnoreCase(category) &&
+                                !c.isUsed()   // 🔥 FIX HERE
                 )
                 .toList();
     }
