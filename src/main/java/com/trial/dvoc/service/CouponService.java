@@ -49,7 +49,8 @@ public class CouponService {
         try{
             repo.save(coupon);
         } catch (Exception e){
-            throw new RuntimeException("Coupon already exists or invalid data");
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -161,19 +162,16 @@ public class CouponService {
         repo.save(coupon);
     }
 
-    // 🔹 total coupons count
     public long totalCoupons(){
         return repo.count();
     }
 
-    // 🔹 active coupons (not used)
     public long activeCoupons(){
         return repo.findAll().stream()
                 .filter(c -> !c.isUsed())
                 .count();
     }
 
-    // 🔹 search coupons
     public List<Coupon> searchCoupons(String keyword){
         return repo.findAll().stream()
                 .filter(c ->
@@ -183,7 +181,6 @@ public class CouponService {
                 .toList();
     }
 
-    // 🔹 filter by category
     public List<Coupon> getByCategory(String category){
         return repo.findAll().stream()
                 .filter(c ->
@@ -193,7 +190,6 @@ public class CouponService {
                 .toList();
     }
 
-    // 🔹 report coupon
     public void reportCoupon(Long id){
         Coupon coupon = repo.findById(id).orElse(null);
         if(coupon != null){
@@ -202,7 +198,6 @@ public class CouponService {
         }
     }
 
-    // 🔹 remove report
     public void unreportCoupon(Long id){
         Coupon coupon = repo.findById(id).orElse(null);
         if(coupon != null){
