@@ -121,7 +121,7 @@ public class CouponService {
                 .filter(c -> !c.isUsed())
                 .toList();
     }
-
+    @Transactional
     public void deleteCoupon(Long id) {
 
         voteRepo.deleteByCouponId(id);
