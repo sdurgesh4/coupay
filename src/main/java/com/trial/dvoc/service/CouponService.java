@@ -160,4 +160,54 @@ public class CouponService {
 
         repo.save(coupon);
     }
+
+    // 🔹 total coupons count
+    public long totalCoupons(){
+        return repo.count();
+    }
+
+    // 🔹 active coupons (not used)
+    public long activeCoupons(){
+        return repo.findAll().stream()
+                .filter(c -> !c.isUsed())
+                .count();
+    }
+
+    // 🔹 search coupons
+    public List<Coupon> searchCoupons(String keyword){
+        return repo.findAll().stream()
+                .filter(c ->
+                        (c.getBrand()!=null && c.getBrand().toLowerCase().contains(keyword.toLowerCase())) ||
+                                (c.getDescription()!=null && c.getDescription().toLowerCase().contains(keyword.toLowerCase()))
+                )
+                .toList();
+    }
+
+    // 🔹 filter by category
+    public List<Coupon> getByCategory(String category){
+        return repo.findAll().stream()
+                .filter(c ->
+                        c.getCategory()!=null &&
+                                c.getCategory().equalsIgnoreCase(category)
+                )
+                .toList();
+    }
+
+    // 🔹 report coupon
+    public void reportCoupon(Long id){
+        Coupon coupon = repo.findById(id).orElse(null);
+        if(coupon != null){
+            coupon.setReported(true);
+            repo.save(coupon);
+        }
+    }
+
+    // 🔹 remove report
+    public void unreportCoupon(Long id){
+        Coupon coupon = repo.findById(id).orElse(null);
+        if(coupon != null){
+            coupon.setReported(false);
+            repo.save(coupon);
+        }
+    }
 }
