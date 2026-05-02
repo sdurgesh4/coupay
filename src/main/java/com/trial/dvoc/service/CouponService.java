@@ -48,7 +48,21 @@ public class CouponService {
     }
 
     public void saveCoupon(Coupon coupon){
+        // ✅ prevent null issues
+        if(coupon.getCouponCode()==null || coupon.getCouponCode().isBlank()){
+            coupon.setCouponCode("AUTO-" + System.currentTimeMillis());
+        }
+
+        if(coupon.getCategory()==null || coupon.getCategory().isBlank()){
+            coupon.setCategory("others");
+        }
+
+        if(coupon.getRedeemNowUrl()==null){
+            coupon.setRedeemNowUrl("");
+        }
+
         coupon.setQrCodeUrl(getCategoryImage(coupon.getCategory()));
+
         repo.save(coupon);
     }
 
